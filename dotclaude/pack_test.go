@@ -174,6 +174,42 @@ func TestJSONPages(t *testing.T) {
 	}
 }
 
+// TestSiblingInjection builds a project-style layout (a repo containing .claude/
+// plus root-level CLAUDE.md and .mcp.json) and verifies the siblings are folded
+// in: the root CLAUDE.md becomes the home page and the root .mcp.json renders.
+func TestSiblingInjection(t *testing.T) {
+	repo := t.TempDir()
+	content := filepath.Join(repo, ".claude")
+	out := filepath.Join(repo, "out")
+
+	writeFile(t, content, "agents/reviewer.md", "---\nname: reviewer\n---\nReviews.\n")
+	// Root-level siblings, one level above the content dir.
+	writeFile(t, repo, "CLAUDE.md", "# Project root memory\nTop-level conventions.\n")
+	writeFile(t, repo, ".mcp.json", `{ "mcpServers": { "github": { "command": "npx" } } }`)
+
+	eng := engine.New()
+	eng.Use(dotclaude.Pack())
+	eng.AfterParse(dotclaude.SiblingHook(repo)) // siblingDir = repo (parent of .claude)
+	if err := eng.Build(context.Background(), engine.BuildOptions{ContentDir: content, OutputDir: out, SiteName: "Repo"}); err != nil {
+		t.Fatalf("build with siblings failed: %v", err)
+	}
+
+	// The root CLAUDE.md is the home page.
+	home := read(t, filepath.Join(out, "index.html"))
+	if !strings.Contains(home, "Project root memory") {
+		t.Error("root CLAUDE.md should be the home page")
+	}
+	// The root .mcp.json renders.
+	mcp := read(t, filepath.Join(out, "mcp/index.html"))
+	if !strings.Contains(mcp, "github") {
+		t.Error("root .mcp.json should render its server")
+	}
+	// The in-.claude agent still renders and is cataloged.
+	if !strings.Contains(home, `href="agents/reviewer/"`) {
+		t.Error("home catalog should list the in-.claude agent")
+	}
+}
+
 // TestMalformedJSONDegrades verifies a broken JSON file does not fail the build:
 // the page still renders, reporting the error and showing the raw source.
 func TestMalformedJSONDegrades(t *testing.T) {

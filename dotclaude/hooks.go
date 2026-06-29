@@ -19,6 +19,10 @@ import (
 func AfterParseHook() core.AfterParseHook {
 	return func(pages []*core.Page) ([]*core.Page, error) {
 		for _, p := range pages {
+			// Injected siblings classify and enrich themselves; don't reprocess.
+			if sib, _ := p.Envelope["sibling"].(bool); sib {
+				continue
+			}
 			kind := classify.Classify(p.RelPath)
 			if kind == classify.KindUnknown {
 				continue
