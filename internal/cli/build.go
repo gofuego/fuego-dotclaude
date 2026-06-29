@@ -20,10 +20,10 @@ func newBuildCmd() *cobra.Command {
 		Use:   "build [path]",
 		Short: "Build a documentation site from a .claude directory",
 		Long: "Build a site from a .claude directory.\n\n" +
-			"With no argument, builds ~/.claude in isolation. Given a repository\n" +
-			"path that contains .claude/, builds it and folds in the root-level\n" +
-			"CLAUDE.md/.mcp.json siblings. Given a .claude directory directly,\n" +
-			"builds it in isolation.",
+			"With no argument, uses the current directory: if it contains .claude/,\n" +
+			"that is built and the root-level CLAUDE.md/.mcp.json siblings are folded\n" +
+			"in. A path containing .claude/ behaves the same; a .claude directory\n" +
+			"given directly is built in isolation.",
 		Args: cobra.MaximumNArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			res, err := resolveScope(cmd, args)
@@ -73,14 +73,19 @@ func newEngine(res scope.Resolution) *engine.Engine {
 }
 
 // resolveScope maps the CLI argument and --siblings/--no-siblings flags to a
-// scope.Resolution.
+// scope.Resolution. With no argument it uses the current working directory, so
+// running the tool inside a project (or inside a .claude) just works.
 func resolveScope(cmd *cobra.Command, args []string) (scope.Resolution, error) {
 	arg := ""
 	if len(args) > 0 {
 		arg = args[0]
 	}
-	home, _ := os.UserHomeDir()
-	return scope.Resolve(scope.OSFS{}, arg, home, siblingsOverride(cmd))
+	if arg == "" {
+		if wd, err := os.Getwd(); err == nil {
+			arg = wd
+		}
+	}
+	return scope.Resolve(scope.OSFS{}, arg, siblingsOverride(cmd))
 }
 
 // addSiblingFlags registers the mutually-informing siblings toggle.

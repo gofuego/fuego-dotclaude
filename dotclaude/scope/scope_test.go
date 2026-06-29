@@ -17,7 +17,6 @@ func TestResolve(t *testing.T) {
 		name      string
 		fs        fakeFS
 		arg       string
-		home      string
 		flag      *bool
 		wantDir   string
 		wantSib   bool
@@ -25,13 +24,12 @@ func TestResolve(t *testing.T) {
 		wantError bool
 	}{
 		{
-			name:     "no arg defaults to home/.claude isolated",
-			fs:       fakeFS{},
+			name:     "empty arg means current dir as a project",
+			fs:       fakeFS{".": true, ".claude": true},
 			arg:      "",
-			home:     "/home/u",
-			wantDir:  "/home/u/.claude",
-			wantSib:  false,
-			wantMode: "isolated",
+			wantDir:  ".claude",
+			wantSib:  true,
+			wantMode: "project",
 		},
 		{
 			name:     "arg is a .claude dir is isolated",
@@ -68,12 +66,10 @@ func TestResolve(t *testing.T) {
 			wantMode: "isolated",
 		},
 		{
-			name:     "plain dir treated as content, isolated",
-			fs:       fakeFS{"/custom": true},
-			arg:      "/custom",
-			wantDir:  "/custom",
-			wantSib:  false,
-			wantMode: "isolated",
+			name:      "dir without a .claude errors",
+			fs:        fakeFS{"/custom": true},
+			arg:       "/custom",
+			wantError: true,
 		},
 		{
 			name:      "missing path errors",
@@ -85,7 +81,7 @@ func TestResolve(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			r, err := Resolve(tt.fs, tt.arg, tt.home, tt.flag)
+			r, err := Resolve(tt.fs, tt.arg, tt.flag)
 			if tt.wantError {
 				if err == nil {
 					t.Fatal("expected error")

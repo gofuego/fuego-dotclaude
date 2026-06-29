@@ -15,25 +15,26 @@ go install github.com/gofuego/fuego-dotclaude@latest
 
 ## Usage
 
-There are two cases, and the CLI detects which one you mean:
+The CLI detects what you mean from the path (default: the current directory):
 
 ```sh
-# 1. Visualize your global Claude Code config in isolation.
-fuego-dotclaude build            # builds ~/.claude
+# In your project (the common case): cd in and run it.
+cd my-project
+fuego-dotclaude build            # builds ./.claude + folds in root CLAUDE.md/.mcp.json
 fuego-dotclaude serve            # live-reloading preview
 
-# 2. A project repo that contains a .claude/ directory.
-fuego-dotclaude build .          # builds ./.claude and folds in the root-level
-                                 # CLAUDE.md / .mcp.json siblings
-fuego-dotclaude build path/to/.claude   # a .claude directly -> isolated
+# Or point at something explicitly.
+fuego-dotclaude build path/to/project   # a repo containing .claude/
+fuego-dotclaude build ~/.claude         # a .claude directly -> isolated
 ```
 
 Detection rules:
 
-- **no argument** → `~/.claude`, in isolation (no siblings)
-- **argument is a `.claude` directory** → that directory, in isolation
+- **no argument** → the current directory (expects `./.claude`; folds in siblings)
 - **argument contains `.claude/`** → `<arg>/.claude`, with the root-level
   `CLAUDE.md`, `CLAUDE.local.md`, and `.mcp.json` folded in
+- **argument is a `.claude` directory** → that directory, in isolation
+- no `.claude` found → an error (nothing is rendered)
 - `--siblings` / `--no-siblings` override the sibling default
 
 ### Commands
