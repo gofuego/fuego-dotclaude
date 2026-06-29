@@ -1,0 +1,12 @@
+{{define "content"}}
+<article class="disambiguation">
+  <div class="artifact-header">
+    <span class="kind-badge kind-taxonomy">disambiguation</span>
+    <h1>{{.Page.Envelope.term}}</h1>
+    <p class="description">Multiple artifacts share this name:</p>
+  </div>
+  <ul class="ref-list">
+    {{range .Page.Envelope.candidates}}<li><a href="{{.url}}">{{.title}}</a> <span class="ref-kind">{{.kind}}</span></li>{{end}}
+  </ul>
+</article>
+{{end}}

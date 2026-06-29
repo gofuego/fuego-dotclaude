@@ -83,6 +83,18 @@ func (r *Registry) Collisions() []string {
 	return out
 }
 
+// DisambiguationSets returns the ambiguous names (more than one target) mapped
+// to their targets — the data behind each disambiguation page.
+func (r *Registry) DisambiguationSets() map[string][]Target {
+	out := map[string][]Target{}
+	for k, ts := range r.byKey {
+		if len(ts) > 1 {
+			out[k] = ts
+		}
+	}
+	return out
+}
+
 // finalize computes the match key order: longest first (so the longest slug
 // wins an overlap), then lexical for determinism.
 func (r *Registry) finalize() {

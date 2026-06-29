@@ -65,6 +65,9 @@ description: Terse responses.
 ---
 Lead with the answer.
 `)
+	// An ambiguous name "deploy": an agent and a command both claim it.
+	writeFile(t, content, "agents/deployer.md", "---\nname: deploy\ndescription: Deploys releases.\n---\nDeploy it.\n")
+	writeFile(t, content, "commands/deploy.md", "---\ndescription: Deploy the app.\n---\nDeploy it.\n")
 	writeFile(t, content, "CLAUDE.md", "# Workspace memory\nProject conventions live here.\n")
 	writeFile(t, content, "CLAUDE.local.md", "# Local memory\nMachine-specific notes.\n")
 	writeFile(t, content, ".mcp.json", `{
@@ -377,6 +380,41 @@ func TestCrossReferenceLinks(t *testing.T) {
 	}
 	if !strings.Contains(skill, "slug-link") {
 		t.Error("auto-link should carry the slug-link class")
+	}
+}
+
+// TestBacklinksDisambiguationGraph checks the reverse-navigation slice: a
+// "Referenced by" list, a disambiguation page per ambiguous name, and a global
+// reference-graph index.
+func TestBacklinksDisambiguationGraph(t *testing.T) {
+	out := buildFixture(t)
+
+	// The code-review skill mentions code-reviewer, so the agent page lists it
+	// under "Referenced by".
+	agent := read(t, filepath.Join(out, "agents/code-reviewer/index.html"))
+	if !strings.Contains(agent, "Referenced by") {
+		t.Error("code-reviewer page should have a Referenced by section")
+	}
+	if !strings.Contains(agent, `href="skills/code-review/"`) {
+		t.Error("code-reviewer should be backlinked from the code-review skill")
+	}
+
+	// "deploy" is claimed by an agent and a command -> a disambiguation page that
+	// lists both.
+	dis := read(t, filepath.Join(out, "disambiguation/deploy/index.html"))
+	for _, want := range []string{`href="agents/deployer/"`, `href="commands/deploy/"`} {
+		if !strings.Contains(dis, want) {
+			t.Errorf("disambiguation page missing %q", want)
+		}
+	}
+
+	// The global reference graph renders.
+	graph := read(t, filepath.Join(out, "references/index.html"))
+	if !strings.Contains(graph, "Reference graph") {
+		t.Error("reference-graph index should render")
+	}
+	if !strings.Contains(graph, `href="agents/code-reviewer/"`) {
+		t.Error("reference graph should show the skill -> code-reviewer edge")
 	}
 }
 

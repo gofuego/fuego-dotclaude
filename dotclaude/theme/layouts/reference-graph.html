@@ -1,0 +1,21 @@
+{{define "content"}}
+<article class="reference-graph">
+  <div class="artifact-header">
+    <h1>Reference graph</h1>
+    <p class="description">Which artifacts mention which.</p>
+  </div>
+  {{with .Page.Envelope.edges}}
+  <ul class="graph-list">
+    {{range .}}
+    <li>
+      <a href="{{.source_url}}">{{.source_title}}</a>
+      <span class="arrow">&rarr;</span>
+      {{range $i, $t := .targets}}{{if $i}}, {{end}}<a href="{{$t.url}}">{{$t.title}}</a>{{end}}
+    </li>
+    {{end}}
+  </ul>
+  {{else}}
+  <p class="muted">No cross-references found.</p>
+  {{end}}
+</article>
+{{end}}
