@@ -1,0 +1,17 @@
+{{define "content"}}
+<article class="artifact command">
+  <div class="artifact-header">
+    <span class="kind-badge kind-command">command</span>
+    <h1><code class="command-name">{{.Page.Envelope.command_name}}</code></h1>
+    {{with .Page.Envelope.description}}<p class="description">{{.}}</p>{{end}}
+    <dl class="meta">
+      {{with index .Page.Envelope "argument-hint"}}<dt>Arguments</dt><dd><code>{{.}}</code></dd>{{end}}
+      {{with .Page.Envelope.model}}<dt>Model</dt><dd><code>{{.}}</code></dd>{{end}}
+      {{with index .Page.Envelope "allowed-tools"}}<dt>Allowed tools</dt><dd>{{.}}</dd>{{end}}
+    </dl>
+  </div>
+  <div class="prose">
+    {{.Page.Content}}
+  </div>
+</article>
+{{end}}

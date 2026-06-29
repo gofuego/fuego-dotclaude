@@ -1,0 +1,12 @@
+# Config defaults contributed by the fuego-dotclaude pack. The consuming site's
+# config (or the CLI's options) is deep-merged on top, so anything here can be
+# overridden. Routes are keyed by the artifact type the AfterParse hook assigns;
+# the hook also sets a path-derived {slug}, so artifacts nest under their
+# section and never collide.
+routes:
+  agent: "/agents/{slug}"
+  skill: "/skills/{slug}"
+  skill-doc: "/skills/{slug}"
+  command: "/commands/{slug}"
+  output-style: "/output-styles/{slug}"
+  memory: "/memory/{slug}"

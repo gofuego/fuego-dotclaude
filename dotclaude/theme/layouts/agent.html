@@ -1,0 +1,21 @@
+{{define "content"}}
+<article class="artifact agent">
+  <div class="artifact-header">
+    <span class="kind-badge kind-agent">agent</span>
+    <h1>{{if .Page.Envelope.name}}{{.Page.Envelope.name}}{{else}}{{.Page.Envelope.title}}{{end}}</h1>
+    {{with .Page.Envelope.description}}<p class="description">{{.}}</p>{{end}}
+    <dl class="meta">
+      {{with .Page.Envelope.model}}<dt>Model</dt><dd><code>{{.}}</code></dd>{{end}}
+      <dt>Tools</dt>
+      {{if .Page.Envelope.tools}}
+      <dd class="tools">{{range $i, $t := .Page.Envelope.tools}}{{if $i}} {{end}}<code>{{$t}}</code>{{end}}</dd>
+      {{else}}
+      <dd class="muted">all tools</dd>
+      {{end}}
+    </dl>
+  </div>
+  <div class="prose">
+    {{.Page.Content}}
+  </div>
+</article>
+{{end}}

@@ -1,0 +1,30 @@
+{{define "content"}}
+<article class="artifact skill">
+  <div class="artifact-header">
+    <span class="kind-badge kind-skill">skill</span>
+    <h1>{{.Page.Envelope.name}}</h1>
+    {{with .Page.Envelope.description}}<p class="description">{{.}}</p>{{end}}
+  </div>
+  <div class="prose">
+    {{.Page.Content}}
+  </div>
+
+  {{if or .Page.Envelope.bundled_docs .Page.Envelope.bundled_assets}}
+  <section class="bundled">
+    <h2>Bundled files</h2>
+    {{with .Page.Envelope.bundled_docs}}
+    <h3>Docs</h3>
+    <ul class="file-list">
+      {{range .}}<li><a href="{{.url}}">{{.name}}</a></li>{{end}}
+    </ul>
+    {{end}}
+    {{with .Page.Envelope.bundled_assets}}
+    <h3>Assets</h3>
+    <ul class="file-list">
+      {{range .}}<li><a href="{{.url}}"><code>{{.name}}</code></a></li>{{end}}
+    </ul>
+    {{end}}
+  </section>
+  {{end}}
+</article>
+{{end}}

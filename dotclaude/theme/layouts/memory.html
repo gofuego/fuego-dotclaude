@@ -1,0 +1,12 @@
+{{define "content"}}
+<article class="artifact memory">
+  <div class="artifact-header">
+    <span class="kind-badge kind-memory">memory</span>
+    <h1>{{if .Page.Envelope.title}}{{.Page.Envelope.title}}{{else}}{{.Page.Envelope.memory_path}}{{end}}</h1>
+    {{with .Page.Envelope.memory_path}}<p class="description"><code>{{.}}</code></p>{{end}}
+  </div>
+  <div class="prose">
+    {{.Page.Content}}
+  </div>
+</article>
+{{end}}

@@ -1,0 +1,14 @@
+# Build output
+/build/
+
+# Compiled binary
+/fuego-dotclaude
+
+# Build cache
+.fuego/
+
+# Go test artifacts
+*.test
+*.out
+
+.DS_Store
