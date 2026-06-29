@@ -224,6 +224,37 @@ func TestSiblingInjection(t *testing.T) {
 	}
 }
 
+// TestValidationIsAdvisory verifies the site still renders despite coherence
+// problems, and that Diagnostics reports them (the data behind `validate`).
+func TestValidationIsAdvisory(t *testing.T) {
+	dir := t.TempDir()
+	content := filepath.Join(dir, ".claude")
+	out := filepath.Join(dir, "out")
+	writeFile(t, content, "agents/bad.md", "---\n---\nNo name, no description.\n")
+
+	cap := dotclaude.NewCapture()
+	eng := engine.New()
+	eng.Use(dotclaude.Pack())
+	eng.Index(cap.Index())
+	if err := eng.Build(context.Background(), engine.BuildOptions{ContentDir: content, OutputDir: out, SiteName: "X"}); err != nil {
+		t.Fatalf("build should succeed despite problems: %v", err)
+	}
+	// The site still renders.
+	if _, err := os.Stat(filepath.Join(out, "agents/bad/index.html")); err != nil {
+		t.Errorf("site should render despite problems: %v", err)
+	}
+	// Diagnostics flag the missing frontmatter.
+	var found bool
+	for _, d := range dotclaude.Diagnostics(cap.Pages()) {
+		if strings.Contains(d.Message, "name") {
+			found = true
+		}
+	}
+	if !found {
+		t.Error("expected a missing-name diagnostic for agents/bad.md")
+	}
+}
+
 // TestMalformedJSONDegrades verifies a broken JSON file does not fail the build:
 // the page still renders, reporting the error and showing the raw source.
 func TestMalformedJSONDegrades(t *testing.T) {
