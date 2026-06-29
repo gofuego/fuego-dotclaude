@@ -84,10 +84,10 @@ go test ./... -race
 go run . build testdata/sample/.claude -o /tmp/out
 ```
 
-`go.mod` carries a `replace github.com/gofuego/fuego => ../fuego` for development
-against the workspace checkout. **Release checklist:** pin a tagged Fuego release
-and remove the `replace` directive before publishing — CI and `go install` resolve
-Fuego from the module proxy, not the local sibling.
+Fuego is pinned to a tagged release (`github.com/gofuego/fuego v0.4.4`) and
+resolved from the module proxy, so CI and `go install` work without the workspace
+checkout. To develop against an unreleased Fuego, add a temporary
+`replace github.com/gofuego/fuego => ../fuego` and drop it before committing.
 
 ## License
 

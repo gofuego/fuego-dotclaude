@@ -18,7 +18,3 @@ require (
 	golang.org/x/sync v0.20.0 // indirect
 	golang.org/x/sys v0.46.0 // indirect
 )
-
-// Consuming unreleased engine features from the workspace checkout.
-// Pin a tagged Fuego release and remove this before publishing.
-replace github.com/gofuego/fuego => ../fuego

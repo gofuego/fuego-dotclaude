@@ -132,7 +132,9 @@ fuego-dotclaude/
 
 ## Dependency note
 
-`go.mod` carries `replace github.com/gofuego/fuego => ../fuego` for development
-against the workspace checkout. **Before publishing, pin a tagged Fuego release
-and remove the replace** — CI (`gofuego/.github` `go-ci.yml`) and `go install`
-resolve Fuego from the module proxy, so the replace must be gone for them to pass.
+Fuego is pinned to a tagged release (`github.com/gofuego/fuego v0.4.4`) and
+resolved from the module proxy, so CI (`gofuego/.github` `go-ci.yml`) and
+`go install` work without the workspace checkout. To develop against an
+unreleased Fuego, add a temporary `replace github.com/gofuego/fuego => ../fuego`
+and remove it before committing. (v0.4.4 predates Fuego's LICENSE; bump the pin
+to the first licensed tag when one is cut.)
