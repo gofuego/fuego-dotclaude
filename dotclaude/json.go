@@ -21,6 +21,7 @@ func (p *MCPParser) Parse(raw []byte) (core.Envelope, []core.Node, error) {
 	env := core.Envelope{
 		"title":    "MCP Servers",
 		"layout":   "mcp",
+		"source":   "project",
 		"raw_json": jsonmodel.Pretty(raw),
 	}
 
@@ -76,6 +77,7 @@ func (p *SettingsParser) Parse(raw []byte) (core.Envelope, []core.Node, error) {
 	env := core.Envelope{
 		"title":    title,
 		"layout":   "settings",
+		"source":   "project",
 		"raw_json": jsonmodel.Pretty(raw),
 	}
 
@@ -85,7 +87,9 @@ func (p *SettingsParser) Parse(raw []byte) (core.Envelope, []core.Node, error) {
 		return env, nil, nil
 	}
 
-	env["model"] = s.Model
+	if s.Model != "" {
+		env["model"] = s.Model
+	}
 	if s.Permissions != nil {
 		env["permissions"] = map[string]any{
 			"allow":        s.Permissions.Allow,

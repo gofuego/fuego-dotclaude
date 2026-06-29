@@ -1,0 +1,2 @@
+{{- $u := printf "%s" .Attributes.url -}}
+<li class="ref"><a href="{{slice $u 1}}">{{if .Attributes.title}}{{.Attributes.title}}{{else}}{{$u}}{{end}}</a>{{with .Attributes.type}} <span class="ref-kind">{{.}}</span>{{end}}</li>

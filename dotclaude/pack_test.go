@@ -55,6 +55,7 @@ See the bundled checklist. Pairs well with the code-reviewer agent.
 	writeFile(t, content, "skills/code-review/lint.sh", "#!/usr/bin/env bash\necho lint\n")
 	writeFile(t, content, "commands/git/commit.md", `---
 description: Commit staged changes.
+allowed-tools: Bash, Read
 ---
 Create a conventional commit.
 `)
@@ -237,6 +238,50 @@ func TestHomeDashboardWithoutClaudeMd(t *testing.T) {
 	home := read(t, filepath.Join(out, "index.html"))
 	if !strings.Contains(home, "Catalog") || !strings.Contains(home, `href="agents/reviewer/"`) {
 		t.Errorf("dashboard should show the catalog with the agent; got:\n%s", home)
+	}
+}
+
+// TestTaxonomies checks that tool, model, and source taxonomy term + index
+// pages render, and that an artifact declaring multiple tools appears under each
+// tool term.
+func TestTaxonomies(t *testing.T) {
+	out := buildFixture(t)
+
+	// Index pages render for each taxonomy.
+	for _, idx := range []string{"tools/index.html", "models/index.html", "sources/index.html"} {
+		if _, err := os.Stat(filepath.Join(out, idx)); err != nil {
+			t.Errorf("expected taxonomy index %s: %v", idx, err)
+		}
+	}
+
+	// code-reviewer declares Read, Grep, Bash -> appears under each tool term.
+	for _, term := range []string{"read", "grep", "bash"} {
+		page := filepath.Join(out, "tools", term, "index.html")
+		html, err := os.ReadFile(page)
+		if err != nil {
+			t.Errorf("expected tool term page %s: %v", term, err)
+			continue
+		}
+		if !strings.Contains(string(html), "code-reviewer") {
+			t.Errorf("tool term %q should list code-reviewer", term)
+		}
+	}
+
+	// The Bash term also lists the git:commit command (allowed-tools -> tools).
+	bash := read(t, filepath.Join(out, "tools/bash/index.html"))
+	if !strings.Contains(bash, "/git:commit") {
+		t.Error("Bash tool term should also list the git:commit command")
+	}
+
+	// Model term page for the agent's pinned model.
+	model := read(t, filepath.Join(out, "models/sonnet/index.html"))
+	if !strings.Contains(model, "code-reviewer") {
+		t.Error("model term sonnet should list code-reviewer")
+	}
+
+	// Source term page groups project artifacts.
+	if _, err := os.Stat(filepath.Join(out, "sources/project/index.html")); err != nil {
+		t.Errorf("expected source term project: %v", err)
 	}
 }
 

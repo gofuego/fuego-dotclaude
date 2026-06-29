@@ -13,3 +13,23 @@ routes:
   mcp: "/mcp"
   settings: "/settings"
   settings-local: "/settings/local"
+
+# Faceted navigation. Taxonomy keys match the envelope fields the AfterParse
+# hook normalizes: tools (agents' tools + commands' allowed-tools), model, and
+# source (provenance). The engine generates a term page per value and an index.
+taxonomies:
+  tools:
+    path: "/tools/{term}"
+    layout: "taxonomy-term"
+    index_path: "/tools"
+    index_layout: "taxonomy-index"
+  model:
+    path: "/models/{term}"
+    layout: "taxonomy-term"
+    index_path: "/models"
+    index_layout: "taxonomy-index"
+  source:
+    path: "/sources/{term}"
+    layout: "taxonomy-term"
+    index_path: "/sources"
+    index_layout: "taxonomy-index"

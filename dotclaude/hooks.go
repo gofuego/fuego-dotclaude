@@ -37,21 +37,63 @@ func AfterParseHook() core.AfterParseHook {
 	}
 }
 
-// enrich adds kind-specific display fields the theme reads.
+// enrich adds kind-specific display fields the theme reads, plus the normalized
+// taxonomy fields (tools, source) and a title fallback used by taxonomy and
+// catalog listings.
 func enrich(kind classify.Kind, p *core.Page) {
+	env := p.Envelope
+
+	// Provenance: every artifact is project-scoped for now; plugin artifacts
+	// override this in the plugins slice.
+	if _, ok := env["source"]; !ok {
+		env["source"] = "project"
+	}
+
 	switch kind {
 	case classify.KindAgent:
-		if v, ok := p.Envelope["tools"]; ok {
-			p.Envelope["tools"] = toStringSlice(v)
-		}
+		normalizeTools(env)
 	case classify.KindSkill:
-		if name, _ := p.Envelope["name"].(string); name == "" {
-			p.Envelope["name"] = path.Base(classify.SkillRoot(p.RelPath))
+		if name, _ := env["name"].(string); name == "" {
+			env["name"] = path.Base(classify.SkillRoot(p.RelPath))
 		}
 	case classify.KindCommand:
-		p.Envelope["command_name"] = classify.CommandName(p.RelPath)
+		env["command_name"] = classify.CommandName(p.RelPath)
+		normalizeTools(env)
 	case classify.KindMemory:
-		p.Envelope["memory_path"] = filepath.ToSlash(p.RelPath)
+		env["memory_path"] = filepath.ToSlash(p.RelPath)
+	}
+
+	setTitle(kind, p)
+}
+
+// normalizeTools coerces an artifact's tool list into the "tools" taxonomy
+// field. Agents declare "tools", commands declare "allowed-tools"; both may be a
+// comma-separated string or a YAML list. A missing field leaves no tools.
+func normalizeTools(env core.Envelope) {
+	if v, ok := env["tools"]; ok {
+		env["tools"] = toStringSlice(v)
+		return
+	}
+	if v, ok := env["allowed-tools"]; ok {
+		env["tools"] = toStringSlice(v)
+	}
+}
+
+// setTitle gives every artifact a "title" (used by taxonomy/catalog listings and
+// the manifest) when one isn't already present.
+func setTitle(kind classify.Kind, p *core.Page) {
+	if t, _ := p.Envelope["title"].(string); t != "" {
+		return
+	}
+	switch kind {
+	case classify.KindCommand:
+		p.Envelope["title"] = stringOf(p.Envelope["command_name"])
+	case classify.KindMemory:
+		p.Envelope["title"] = stringOf(p.Envelope["memory_path"])
+	default:
+		if n := stringOf(p.Envelope["name"]); n != "" {
+			p.Envelope["title"] = n
+		}
 	}
 }
 

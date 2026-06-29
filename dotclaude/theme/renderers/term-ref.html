@@ -1,0 +1,2 @@
+{{- $u := printf "%s" .Attributes.url -}}
+<li class="term"><a href="{{slice $u 1}}">{{.Attributes.term}}</a> <span class="count">{{.Attributes.count}}</span></li>

@@ -1,0 +1,9 @@
+{{define "content"}}
+<article class="taxonomy">
+  <div class="artifact-header">
+    <span class="kind-badge kind-taxonomy">{{.Page.Envelope.taxonomy}}</span>
+    <h1>{{.Page.Envelope.term}}</h1>
+  </div>
+  <ul class="ref-list">{{.Page.Content}}</ul>
+</article>
+{{end}}
