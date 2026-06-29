@@ -1,0 +1,20 @@
+{{define "content"}}
+<article class="section-index">
+  <div class="artifact-header">
+    <span class="kind-badge kind-section">folder</span>
+    <h1>{{.Page.Envelope.title}}<span class="dir-slash">/</span></h1>
+  </div>
+  {{with .Page.Envelope.children}}
+  <ul class="dir-listing">
+    {{range .}}
+    <li class="{{if .is_dir}}is-dir{{else}}is-file{{end}}">
+      <a href="{{.url}}">{{.name}}{{if .is_dir}}<span class="dir-slash">/</span>{{end}}</a>
+      <span class="ref-kind">{{.kind}}</span>
+    </li>
+    {{end}}
+  </ul>
+  {{else}}
+  <p class="muted">This directory is empty.</p>
+  {{end}}
+</article>
+{{end}}

@@ -31,7 +31,7 @@ func Pack() core.Pack {
 		ConfigDefaults: configDefaults,
 		Hooks: core.Hooks{
 			AfterParse:   []core.AfterParseHook{AfterParseHook()},
-			Index:        []core.IndexHook{IndexHook(), PluginHook(), HomeHook(), ReferenceHook()},
+			Index:        []core.IndexHook{IndexHook(), PluginHook(), HomeHook(), ReferenceHook(), NavHook()},
 			BeforeRender: []core.BeforeRenderHook{LinkHook()},
 		},
 	}
