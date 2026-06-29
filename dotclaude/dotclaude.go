@@ -18,8 +18,13 @@ var configDefaults []byte
 func Pack() core.Pack {
 	theme, _ := fs.Sub(themeFS, "theme")
 	return core.Pack{
-		Name:           "dotclaude",
-		Parsers:        []core.Parser{NewParser()},
+		Name: "dotclaude",
+		Parsers: []core.Parser{
+			NewParser(),
+			&MCPParser{},
+			&SettingsParser{},
+			&SettingsParser{local: true},
+		},
 		Theme:          theme,
 		ConfigDefaults: configDefaults,
 		Hooks: core.Hooks{

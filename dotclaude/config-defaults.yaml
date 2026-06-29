@@ -10,3 +10,6 @@ routes:
   command: "/commands/{slug}"
   output-style: "/output-styles/{slug}"
   memory: "/memory/{slug}"
+  mcp: "/mcp"
+  settings: "/settings"
+  settings-local: "/settings/local"

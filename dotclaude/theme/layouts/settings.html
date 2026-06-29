@@ -1,0 +1,67 @@
+{{define "content"}}
+<article class="artifact settings">
+  <div class="artifact-header">
+    <span class="kind-badge kind-settings">settings</span>
+    <h1>{{.Page.Envelope.title}}</h1>
+  </div>
+
+  {{with .Page.Envelope.parse_error}}
+  <div class="parse-error">Could not parse settings: {{.}}</div>
+  {{end}}
+
+  {{with .Page.Envelope.model}}
+  <section class="settings-section"><h2>Model</h2><p><code>{{.}}</code></p></section>
+  {{end}}
+
+  {{with .Page.Envelope.permissions}}
+  <section class="settings-section">
+    <h2>Permissions</h2>
+    {{with .default_mode}}<p>Default mode: <code>{{.}}</code></p>{{end}}
+    {{with .allow}}<h3>Allow</h3><ul class="rule-list">{{range .}}<li><code>{{.}}</code></li>{{end}}</ul>{{end}}
+    {{with .ask}}<h3>Ask</h3><ul class="rule-list">{{range .}}<li><code>{{.}}</code></li>{{end}}</ul>{{end}}
+    {{with .deny}}<h3>Deny</h3><ul class="rule-list">{{range .}}<li><code>{{.}}</code></li>{{end}}</ul>{{end}}
+    {{with .additional}}<h3>Additional directories</h3><ul class="rule-list">{{range .}}<li><code>{{.}}</code></li>{{end}}</ul>{{end}}
+  </section>
+  {{end}}
+
+  {{with .Page.Envelope.env_vars}}
+  <section class="settings-section">
+    <h2>Environment</h2>
+    <table class="kv"><tbody>{{range .}}<tr><th><code>{{.Key}}</code></th><td><code>{{.Value}}</code></td></tr>{{end}}</tbody></table>
+  </section>
+  {{end}}
+
+  {{with .Page.Envelope.mcp_controls}}
+  {{if or .enable_all .enabled .disabled}}
+  <section class="settings-section">
+    <h2>MCP servers</h2>
+    {{if .enable_all}}<p>All project MCP servers enabled.</p>{{end}}
+    {{with .enabled}}<p>Enabled: {{range $i, $s := .}}{{if $i}}, {{end}}<code>{{$s}}</code>{{end}}</p>{{end}}
+    {{with .disabled}}<p>Disabled: {{range $i, $s := .}}{{if $i}}, {{end}}<code>{{$s}}</code>{{end}}</p>{{end}}
+  </section>
+  {{end}}
+  {{end}}
+
+  {{with .Page.Envelope.hooks_json}}
+  <section class="settings-section"><h2>Hooks</h2><pre><code>{{.}}</code></pre></section>
+  {{end}}
+
+  {{with .Page.Envelope.status_line_json}}
+  <section class="settings-section"><h2>Status line</h2><pre><code>{{.}}</code></pre></section>
+  {{end}}
+
+  {{with .Page.Envelope.other_settings}}
+  <section class="settings-section">
+    <h2>Other settings</h2>
+    <table class="kv"><tbody>{{range .}}<tr><th><code>{{.Key}}</code></th><td><code>{{.Value}}</code></td></tr>{{end}}</tbody></table>
+  </section>
+  {{end}}
+
+  {{with .Page.Envelope.raw_json}}
+  <details class="raw-json">
+    <summary>Raw JSON</summary>
+    <pre><code>{{.}}</code></pre>
+  </details>
+  {{end}}
+</article>
+{{end}}

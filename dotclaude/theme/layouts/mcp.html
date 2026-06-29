@@ -1,0 +1,45 @@
+{{define "content"}}
+<article class="artifact mcp">
+  <div class="artifact-header">
+    <span class="kind-badge kind-mcp">mcp</span>
+    <h1>MCP Servers</h1>
+  </div>
+
+  {{with .Page.Envelope.parse_error}}
+  <div class="parse-error">Could not parse <code>.mcp.json</code>: {{.}}</div>
+  {{end}}
+
+  {{if .Page.Envelope.mcp_servers}}
+  <div class="card-grid">
+    {{range .Page.Envelope.mcp_servers}}
+    <section class="card" id="server-{{.name}}">
+      <h2>{{.name}}</h2>
+      <dl class="meta">
+        <dt>Transport</dt><dd><code>{{.transport}}</code></dd>
+        {{with .command}}<dt>Command</dt><dd><code>{{.}}</code></dd>{{end}}
+        {{with .args}}<dt>Args</dt><dd>{{range $i, $a := .}}{{if $i}} {{end}}<code>{{$a}}</code>{{end}}</dd>{{end}}
+        {{with .url}}<dt>URL</dt><dd><code>{{.}}</code></dd>{{end}}
+      </dl>
+      {{with .env}}
+      <h3>Environment</h3>
+      <table class="kv"><tbody>{{range .}}<tr><th><code>{{.Key}}</code></th><td><code>{{.Value}}</code></td></tr>{{end}}</tbody></table>
+      {{end}}
+      {{with .headers}}
+      <h3>Headers</h3>
+      <table class="kv"><tbody>{{range .}}<tr><th><code>{{.Key}}</code></th><td><code>{{.Value}}</code></td></tr>{{end}}</tbody></table>
+      {{end}}
+    </section>
+    {{end}}
+  </div>
+  {{else if not .Page.Envelope.parse_error}}
+  <p class="muted">No MCP servers configured.</p>
+  {{end}}
+
+  {{with .Page.Envelope.raw_json}}
+  <details class="raw-json">
+    <summary>Raw <code>.mcp.json</code></summary>
+    <pre><code>{{.}}</code></pre>
+  </details>
+  {{end}}
+</article>
+{{end}}

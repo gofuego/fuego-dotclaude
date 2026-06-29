@@ -130,3 +130,28 @@ code {
 .bundled h3 { color: var(--muted); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.4rem; }
 ul.file-list { list-style: none; padding: 0; margin: 0 0 1rem; }
 ul.file-list li { padding: 0.2rem 0; }
+
+/* JSON config pages */
+.kind-mcp { background: #1f6feb26; color: #58a6ff; }
+.kind-settings { background: #8957e526; color: #b083f0; }
+
+.card-grid { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fill, minmax(20rem, 1fr)); margin: 1rem 0; }
+.card { border: 1px solid var(--border); border-radius: var(--radius); padding: 1rem 1.25rem; background: var(--bg-elev); }
+.card h2 { margin-top: 0; font-size: 1.15rem; }
+.card h3 { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); margin-bottom: 0.3rem; }
+
+.settings-section { margin: 1.5rem 0; }
+.settings-section h2 { font-size: 1.2rem; border-bottom: 1px solid var(--border); padding-bottom: 0.3rem; }
+.settings-section h3 { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); margin-bottom: 0.3rem; }
+ul.rule-list { list-style: none; padding: 0; margin: 0 0 0.75rem; }
+ul.rule-list li { padding: 0.1rem 0; }
+
+table.kv { border-collapse: collapse; width: 100%; }
+table.kv th, table.kv td { border: 1px solid var(--border); padding: 0.3rem 0.6rem; text-align: left; vertical-align: top; }
+table.kv th { color: var(--muted); font-weight: 500; white-space: nowrap; }
+
+.parse-error { border: 1px solid #f8514966; background: #f8514922; color: #ff7b72; padding: 0.75rem 1rem; border-radius: var(--radius); margin: 1rem 0; }
+
+details.raw-json { margin-top: 1.5rem; border-top: 1px solid var(--border); padding-top: 1rem; }
+details.raw-json summary { cursor: pointer; color: var(--muted); }
+details.raw-json pre { margin-top: 0.75rem; }

@@ -1,0 +1,13 @@
+{
+  "model": "opus",
+  "permissions": {
+    "allow": ["Bash(go test:*)", "Read(./**)"],
+    "deny": ["Read(./.env)"],
+    "defaultMode": "acceptEdits"
+  },
+  "env": { "FUEGO_ENV": "dev" },
+  "enableAllProjectMcpServers": true,
+  "enabledMcpjsonServers": ["github"],
+  "includeCoAuthoredBy": true,
+  "cleanupPeriodDays": 30
+}

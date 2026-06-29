@@ -65,6 +65,19 @@ description: Terse responses.
 Lead with the answer.
 `)
 	writeFile(t, content, "CLAUDE.md", "# Workspace memory\nProject conventions live here.\n")
+	writeFile(t, content, ".mcp.json", `{
+  "mcpServers": {
+    "github": { "command": "npx", "args": ["-y", "server-github"], "env": {"TOKEN": "x"} },
+    "docs": { "url": "https://docs.example/mcp", "type": "sse" }
+  }
+}`)
+	writeFile(t, content, "settings.json", `{
+  "model": "opus",
+  "permissions": { "allow": ["Bash(ls)"], "deny": ["Read(./.env)"], "defaultMode": "acceptEdits" },
+  "env": { "FOO": "bar" },
+  "cleanupPeriodDays": 30
+}`)
+	writeFile(t, content, "settings.local.json", `{ "model": "sonnet" }`)
 
 	eng := engine.New()
 	eng.Use(dotclaude.Pack())
@@ -118,6 +131,67 @@ func TestPackRendersEveryArtifactType(t *testing.T) {
 	// Pack static asset travels with the pack.
 	if _, err := os.Stat(filepath.Join(out, "style.css")); err != nil {
 		t.Errorf("expected pack static asset style.css: %v", err)
+	}
+}
+
+// TestJSONPages checks the .mcp.json and settings pages render with structured
+// content (server cards, curated sections) and a raw-JSON block.
+func TestJSONPages(t *testing.T) {
+	out := buildFixture(t)
+
+	mcp := read(t, filepath.Join(out, "mcp/index.html"))
+	for _, want := range []string{
+		`id="server-github"`, // one card per server
+		`id="server-docs"`,
+		"sse",        // transport inferred/explicit
+		"TOKEN",      // env surfaced
+		"Raw",        // collapsible raw block
+	} {
+		if !strings.Contains(mcp, want) {
+			t.Errorf("mcp page missing %q", want)
+		}
+	}
+
+	settings := read(t, filepath.Join(out, "settings/index.html"))
+	for _, want := range []string{
+		"opus",               // model
+		"acceptEdits",        // permissions default mode
+		"Bash(ls)",           // allow rule
+		"cleanupPeriodDays",  // long-tail key in generic table
+		"30",                 // its value
+		"Raw JSON",           // collapsible raw block
+	} {
+		if !strings.Contains(settings, want) {
+			t.Errorf("settings page missing %q", want)
+		}
+	}
+
+	local := read(t, filepath.Join(out, "settings/local/index.html"))
+	if !strings.Contains(local, "sonnet") {
+		t.Error("settings.local page should render its model")
+	}
+}
+
+// TestMalformedJSONDegrades verifies a broken JSON file does not fail the build:
+// the page still renders, reporting the error and showing the raw source.
+func TestMalformedJSONDegrades(t *testing.T) {
+	dir := t.TempDir()
+	content := filepath.Join(dir, ".claude")
+	out := filepath.Join(dir, "out")
+	writeFile(t, content, ".mcp.json", `{ "mcpServers": { broken`)
+
+	eng := engine.New()
+	eng.Use(dotclaude.Pack())
+	if err := eng.Build(context.Background(), engine.BuildOptions{ContentDir: content, OutputDir: out, SiteName: "X"}); err != nil {
+		t.Fatalf("build should not fail on malformed JSON: %v", err)
+	}
+
+	mcp := read(t, filepath.Join(out, "mcp/index.html"))
+	if !strings.Contains(mcp, "Could not parse") {
+		t.Error("malformed mcp page should report the parse error")
+	}
+	if !strings.Contains(mcp, "broken") {
+		t.Error("malformed mcp page should still show the raw source")
 	}
 }
 
