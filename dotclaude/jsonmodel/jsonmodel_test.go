@@ -86,6 +86,51 @@ func TestParseSettingsMalformed(t *testing.T) {
 	}
 }
 
+func TestParsePluginManifest(t *testing.T) {
+	raw := []byte(`{
+	  "name": "acme-tools",
+	  "version": "1.2.0",
+	  "description": "Handy tools.",
+	  "author": { "name": "Acme", "email": "x@acme.dev" },
+	  "keywords": ["dev", "tools"],
+	  "license": "MIT"
+	}`)
+	pm, err := ParsePluginManifest(raw)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if pm.Name != "acme-tools" || pm.Version != "1.2.0" {
+		t.Errorf("name/version not decoded: %+v", pm)
+	}
+	if pm.Author != "Acme" {
+		t.Errorf("author object should flatten to name, got %q", pm.Author)
+	}
+	if len(pm.Keywords) != 2 {
+		t.Errorf("keywords not decoded: %v", pm.Keywords)
+	}
+}
+
+func TestParseMarketplace(t *testing.T) {
+	raw := []byte(`{
+	  "name": "acme-market",
+	  "owner": "Acme Inc",
+	  "plugins": [
+	    { "name": "acme-tools", "source": "./acme-tools", "description": "Tools." },
+	    { "name": "acme-lint" }
+	  ]
+	}`)
+	mk, err := ParseMarketplace(raw)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if mk.Name != "acme-market" || mk.Owner != "Acme Inc" {
+		t.Errorf("name/owner not decoded: %+v", mk)
+	}
+	if len(mk.Plugins) != 2 || mk.Plugins[0].Name != "acme-tools" {
+		t.Errorf("plugins not decoded: %+v", mk.Plugins)
+	}
+}
+
 func TestPretty(t *testing.T) {
 	if got := Pretty([]byte(`{"a":1}`)); got == `{"a":1}` {
 		t.Errorf("Pretty did not reformat: %q", got)

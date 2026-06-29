@@ -1,0 +1,32 @@
+{{define "content"}}
+<article class="artifact marketplace">
+  <div class="artifact-header">
+    <span class="kind-badge kind-plugin">marketplace</span>
+    <h1>{{.Page.Envelope.title}}</h1>
+    {{with .Page.Envelope.owner}}<p class="description">by {{.}}</p>{{end}}
+  </div>
+
+  {{with .Page.Envelope.parse_error}}
+  <div class="parse-error">Could not parse <code>marketplace.json</code>: {{.}}</div>
+  {{end}}
+
+  {{with .Page.Envelope.plugins}}
+  <div class="card-grid">
+    {{range .}}
+    <section class="card">
+      <h2>{{.name}}</h2>
+      {{with .description}}<p>{{.}}</p>{{end}}
+      {{with .source}}<p class="muted"><code>{{.}}</code></p>{{end}}
+    </section>
+    {{end}}
+  </div>
+  {{end}}
+
+  {{with .Page.Envelope.raw_json}}
+  <details class="raw-json">
+    <summary>Raw <code>marketplace.json</code></summary>
+    <pre><code>{{.}}</code></pre>
+  </details>
+  {{end}}
+</article>
+{{end}}

@@ -20,6 +20,8 @@ var catalogOrder = []struct{ kind, label string }{
 	{"mcp", "MCP"},
 	{"settings", "Settings"},
 	{"settings-local", "Local Settings"},
+	{"plugin", "Plugins"},
+	{"marketplace", "Marketplaces"},
 }
 
 // HomeHook makes the site's home page the top-level CLAUDE.md (followed by a

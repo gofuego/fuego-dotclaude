@@ -23,8 +23,15 @@ func AfterParseHook() core.AfterParseHook {
 			if sib, _ := p.Envelope["sibling"].(bool); sib {
 				continue
 			}
+
+			plugin := classify.PluginName(p.RelPath)
 			kind := classify.Classify(p.RelPath)
 			if kind == classify.KindUnknown {
+				// Plugin JSON config/manifest (plugin.json, marketplace.json,
+				// .mcp.json) classify by parser, not path; namespace them here.
+				if plugin != "" && isPluginConfigType(p.Type) {
+					namespacePluginConfig(p, plugin)
+				}
 				continue
 			}
 
@@ -32,10 +39,18 @@ func AfterParseHook() core.AfterParseHook {
 			if p.Layout == "" {
 				p.Layout = string(kind)
 			}
-			if slug := classify.Slug(p.RelPath); slug != "" {
+			slug := classify.Slug(p.RelPath)
+			if plugin != "" && slug != "" {
+				slug = plugin + "/" + slug // namespace plugin artifacts by plugin
+			}
+			if slug != "" {
 				p.Envelope["slug"] = slug
 			}
 			enrich(kind, p)
+			if plugin != "" {
+				p.Envelope["plugin"] = plugin
+				p.Envelope["source"] = plugin // provenance: group by plugin
+			}
 		}
 		return pages, nil
 	}

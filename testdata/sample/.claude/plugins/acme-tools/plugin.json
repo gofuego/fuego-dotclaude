@@ -1,0 +1,9 @@
+{
+  "name": "acme-tools",
+  "version": "1.0.0",
+  "description": "Acme developer tools: linting and formatting helpers.",
+  "author": { "name": "Acme Inc", "url": "https://acme.dev" },
+  "homepage": "https://acme.dev/tools",
+  "license": "MIT",
+  "keywords": ["lint", "format"]
+}

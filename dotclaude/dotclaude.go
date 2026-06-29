@@ -24,12 +24,14 @@ func Pack() core.Pack {
 			&MCPParser{},
 			&SettingsParser{},
 			&SettingsParser{local: true},
+			PluginParser{},
+			MarketplaceParser{},
 		},
 		Theme:          theme,
 		ConfigDefaults: configDefaults,
 		Hooks: core.Hooks{
 			AfterParse:   []core.AfterParseHook{AfterParseHook()},
-			Index:        []core.IndexHook{IndexHook(), HomeHook()},
+			Index:        []core.IndexHook{IndexHook(), PluginHook(), HomeHook()},
 			BeforeRender: []core.BeforeRenderHook{LinkHook()},
 		},
 	}

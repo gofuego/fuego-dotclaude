@@ -48,12 +48,19 @@ const (
 )
 
 // Classify returns the artifact Kind for a content-dir-relative path (relative
-// to the .claude directory). An unrecognized path returns KindUnknown.
+// to the .claude directory). Paths inside plugins/<name>/ classify by their
+// inner artifact, so a plugin's agents/skills/commands reuse the same kinds
+// (and layouts) as project artifacts. An unrecognized path returns KindUnknown.
 func Classify(relPath string) Kind {
-	segments, base, ok := segs(relPath)
+	segments, _, ok := segs(relPath)
 	if !ok {
 		return KindUnknown
 	}
+	segments, _ = effective(segments)
+	if len(segments) == 0 {
+		return KindUnknown
+	}
+	base := segments[len(segments)-1]
 
 	switch segments[0] {
 	case "agents":
@@ -85,14 +92,37 @@ func Classify(relPath string) Kind {
 	return KindUnknown
 }
 
-// Slug returns the routing slug for a recognized path, or "" for KindUnknown.
-// Slugs may contain "/" so artifacts nest under their section route. They are
-// derived from the path, so two files in different directories never collide.
+// PluginName returns the plugin a path belongs to (plugins/<name>/…), or "" for
+// paths outside a plugin.
+func PluginName(relPath string) string {
+	segments, _, ok := segs(relPath)
+	if !ok {
+		return ""
+	}
+	_, plugin := effective(segments)
+	return plugin
+}
+
+// effective strips a leading plugins/<name>/ prefix, returning the inner path
+// segments and the plugin name ("" when not under a plugin).
+func effective(segments []string) (inner []string, plugin string) {
+	if len(segments) >= 3 && segments[0] == "plugins" {
+		return segments[2:], segments[1]
+	}
+	return segments, ""
+}
+
+// Slug returns the section-relative routing slug for a recognized path, or "" for
+// KindUnknown. Slugs may contain "/" so artifacts nest under their section route.
+// For plugin artifacts this is the inner slug; callers prepend the plugin
+// namespace. Derived from the path, so files in different directories never
+// collide.
 func Slug(relPath string) string {
 	segments, _, ok := segs(relPath)
 	if !ok {
 		return ""
 	}
+	segments, _ = effective(segments)
 	switch Classify(relPath) {
 	case KindAgent, KindSkillDoc, KindCommand, KindOutputStyle:
 		// Path under the section directory, extension dropped.
@@ -114,20 +144,30 @@ func CommandName(relPath string) string {
 		return ""
 	}
 	segments, _, _ := segs(relPath)
+	segments, _ = effective(segments)
 	parts := segments[1:] // drop the "commands" prefix
 	parts[len(parts)-1] = dropMD(parts[len(parts)-1])
 	return "/" + strings.Join(parts, ":")
 }
 
-// SkillRoot returns the "skills/<name>" directory a skill or skill-doc belongs
-// to, used to group a skill with its bundled docs and assets. Returns "" when
+// SkillRoot returns the directory a skill or skill-doc belongs to, used to group
+// a skill with its bundled docs and assets. Plugin skills keep their plugin
+// prefix so same-named skills in different plugins stay distinct. Returns "" when
 // the path is not under a skill.
 func SkillRoot(relPath string) string {
 	segments, _, ok := segs(relPath)
-	if !ok || segments[0] != "skills" || len(segments) < 2 {
+	if !ok {
 		return ""
 	}
-	return segments[0] + "/" + segments[1]
+	inner, plugin := effective(segments)
+	if len(inner) < 2 || inner[0] != "skills" {
+		return ""
+	}
+	root := "skills/" + inner[1]
+	if plugin != "" {
+		return "plugins/" + plugin + "/" + root
+	}
+	return root
 }
 
 // segs normalizes a path and splits it into segments, also returning the base

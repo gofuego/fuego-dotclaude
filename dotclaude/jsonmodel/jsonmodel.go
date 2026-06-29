@@ -141,6 +141,92 @@ func ParseSettings(raw []byte) (*Settings, error) {
 	return s, nil
 }
 
+// PluginManifest is a decoded plugin.json. Author is flattened to a display
+// string; Raw holds the full document for the long-tail view.
+type PluginManifest struct {
+	Name        string
+	Version     string
+	Description string
+	Author      string
+	Homepage    string
+	License     string
+	Keywords    []string
+	Raw         map[string]any
+}
+
+// ParsePluginManifest decodes a plugin.json, tolerating an author given as a
+// string or as an object with a name field.
+func ParsePluginManifest(raw []byte) (*PluginManifest, error) {
+	var m map[string]any
+	if err := json.Unmarshal(raw, &m); err != nil {
+		return nil, fmt.Errorf("decoding plugin.json: %w", err)
+	}
+	pm := &PluginManifest{Raw: m}
+	pm.Name, _ = m["name"].(string)
+	pm.Version, _ = m["version"].(string)
+	pm.Description, _ = m["description"].(string)
+	pm.Homepage, _ = m["homepage"].(string)
+	pm.License, _ = m["license"].(string)
+	pm.Keywords = toStrings(m["keywords"])
+	pm.Author = flattenName(m["author"])
+	return pm, nil
+}
+
+// MarketplacePlugin is one entry in a marketplace listing.
+type MarketplacePlugin struct {
+	Name        string
+	Source      string
+	Description string
+}
+
+// Marketplace is a decoded marketplace.json.
+type Marketplace struct {
+	Name    string
+	Owner   string
+	Plugins []MarketplacePlugin
+	Raw     map[string]any
+}
+
+// ParseMarketplace decodes a marketplace.json, tolerating an owner given as a
+// string or object and a plugins list of objects.
+func ParseMarketplace(raw []byte) (*Marketplace, error) {
+	var m map[string]any
+	if err := json.Unmarshal(raw, &m); err != nil {
+		return nil, fmt.Errorf("decoding marketplace.json: %w", err)
+	}
+	mk := &Marketplace{Raw: m}
+	mk.Name, _ = m["name"].(string)
+	mk.Owner = flattenName(m["owner"])
+	if list, ok := m["plugins"].([]any); ok {
+		for _, item := range list {
+			obj, ok := item.(map[string]any)
+			if !ok {
+				continue
+			}
+			p := MarketplacePlugin{}
+			p.Name, _ = obj["name"].(string)
+			p.Description, _ = obj["description"].(string)
+			p.Source = flattenName(obj["source"])
+			mk.Plugins = append(mk.Plugins, p)
+		}
+	}
+	return mk, nil
+}
+
+// flattenName renders a value that may be a string or an object with a "name"
+// field as a display string.
+func flattenName(v any) string {
+	switch val := v.(type) {
+	case string:
+		return val
+	case map[string]any:
+		if s, ok := val["name"].(string); ok {
+			return s
+		}
+	}
+	return ""
+}
+
 // Pretty reformats raw JSON with indentation, or returns the input unchanged if
 // it can't be parsed (so a malformed document still shows its source text).
 func Pretty(raw []byte) string {

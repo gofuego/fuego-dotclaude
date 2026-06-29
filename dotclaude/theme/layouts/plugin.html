@@ -1,0 +1,35 @@
+{{define "content"}}
+<article class="artifact plugin">
+  <div class="artifact-header">
+    <span class="kind-badge kind-plugin">plugin</span>
+    <h1>{{.Page.Envelope.manifest_name}}{{if .Page.Envelope.version}} <span class="version">v{{.Page.Envelope.version}}</span>{{end}}</h1>
+    {{with .Page.Envelope.description}}<p class="description">{{.}}</p>{{end}}
+    <dl class="meta">
+      {{with .Page.Envelope.author}}<dt>Author</dt><dd>{{.}}</dd>{{end}}
+      {{with .Page.Envelope.license}}<dt>License</dt><dd>{{.}}</dd>{{end}}
+      {{with .Page.Envelope.homepage}}<dt>Homepage</dt><dd><a href="{{.}}">{{.}}</a></dd>{{end}}
+      {{with .Page.Envelope.keywords}}<dt>Keywords</dt><dd>{{range $i, $k := .}}{{if $i}}, {{end}}<code>{{$k}}</code>{{end}}</dd>{{end}}
+    </dl>
+  </div>
+
+  {{with .Page.Envelope.parse_error}}
+  <div class="parse-error">Could not parse <code>plugin.json</code>: {{.}}</div>
+  {{end}}
+
+  {{with .Page.Envelope.components}}
+  <section class="bundled">
+    <h2>Provided by this plugin</h2>
+    <ul class="ref-list">
+      {{range .}}<li><a href="{{.url}}">{{.name}}</a> <span class="ref-kind">{{.kind}}</span></li>{{end}}
+    </ul>
+  </section>
+  {{end}}
+
+  {{with .Page.Envelope.raw_json}}
+  <details class="raw-json">
+    <summary>Raw <code>plugin.json</code></summary>
+    <pre><code>{{.}}</code></pre>
+  </details>
+  {{end}}
+</article>
+{{end}}

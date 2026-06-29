@@ -28,6 +28,12 @@ func TestClassify(t *testing.T) {
 		{"local memory", "CLAUDE.local.md", KindMemory},
 		{"nested memory", "projects/api/CLAUDE.md", KindMemory},
 
+		{"plugin agent", "plugins/acme/agents/foo.md", KindAgent},
+		{"plugin skill", "plugins/acme/skills/s/SKILL.md", KindSkill},
+		{"plugin skill doc", "plugins/acme/skills/s/REF.md", KindSkillDoc},
+		{"plugin command", "plugins/acme/commands/git/commit.md", KindCommand},
+		{"plugin memory", "plugins/acme/CLAUDE.md", KindMemory},
+
 		{"agents dir itself", "agents", KindUnknown},
 		{"non-md under agents", "agents/notes.txt", KindUnknown},
 		{"unrelated md", "notes/scratch.md", KindUnknown},
@@ -99,12 +105,48 @@ func TestSkillRoot(t *testing.T) {
 		{"skills/code-review/SKILL.md", "skills/code-review"},
 		{"skills/code-review/REFERENCE.md", "skills/code-review"},
 		{"skills/code-review/refs/api.md", "skills/code-review"},
+		{"plugins/acme/skills/s/SKILL.md", "plugins/acme/skills/s"},
+		{"plugins/acme/skills/s/REF.md", "plugins/acme/skills/s"},
 		{"agents/foo.md", ""},
 	}
 	for _, tt := range tests {
 		t.Run(tt.relPath, func(t *testing.T) {
 			if got := SkillRoot(tt.relPath); got != tt.want {
 				t.Errorf("SkillRoot(%q) = %q, want %q", tt.relPath, got, tt.want)
+			}
+		})
+	}
+}
+
+func TestPluginName(t *testing.T) {
+	cases := map[string]string{
+		"plugins/acme/agents/foo.md":     "acme",
+		"plugins/acme/plugin.json":       "acme",
+		"plugins/acme/.claude-plugin/plugin.json": "acme",
+		"agents/foo.md":                  "",
+		"plugins/acme":                   "", // needs at least one inner segment
+	}
+	for in, want := range cases {
+		t.Run(in, func(t *testing.T) {
+			if got := PluginName(in); got != want {
+				t.Errorf("PluginName(%q) = %q, want %q", in, got, want)
+			}
+		})
+	}
+}
+
+func TestPluginSlugIsSectionRelative(t *testing.T) {
+	// The plugin namespace is added by the caller; Slug stays section-relative.
+	cases := map[string]string{
+		"plugins/acme/agents/foo.md":          "foo",
+		"plugins/acme/skills/s/SKILL.md":       "s",
+		"plugins/acme/skills/s/REF.md":         "s/REF",
+		"plugins/acme/commands/git/commit.md":  "git/commit",
+	}
+	for in, want := range cases {
+		t.Run(in, func(t *testing.T) {
+			if got := Slug(in); got != want {
+				t.Errorf("Slug(%q) = %q, want %q", in, got, want)
 			}
 		})
 	}

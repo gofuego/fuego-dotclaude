@@ -81,6 +81,17 @@ Lead with the answer.
 }`)
 	writeFile(t, content, "settings.local.json", `{ "model": "sonnet" }`)
 
+	// A plugin with its own manifest, agent, skill, and MCP config.
+	writeFile(t, content, "plugins/acme/plugin.json", `{
+  "name": "acme-tools",
+  "version": "1.0.0",
+  "description": "Acme developer tools.",
+  "author": { "name": "Acme" }
+}`)
+	writeFile(t, content, "plugins/acme/agents/linter.md", "---\nname: linter\ndescription: Lints code.\n---\nLint everything.\n")
+	writeFile(t, content, "plugins/acme/skills/format/SKILL.md", "---\nname: format\n---\nFormat code.\n")
+	writeFile(t, content, "plugins/acme/.mcp.json", `{ "mcpServers": { "acme-api": { "url": "https://acme.dev/mcp" } } }`)
+
 	eng := engine.New()
 	eng.Use(dotclaude.Pack())
 	if err := eng.Build(context.Background(), engine.BuildOptions{
@@ -318,6 +329,38 @@ func TestTaxonomies(t *testing.T) {
 	// Source term page groups project artifacts.
 	if _, err := os.Stat(filepath.Join(out, "sources/project/index.html")); err != nil {
 		t.Errorf("expected source term project: %v", err)
+	}
+}
+
+// TestPluginRendersNamespaced checks that a plugin's internal artifacts render
+// as first-class pages under a plugin-namespaced route, the plugin manifest page
+// lists them, and the plugin's artifacts are grouped under a source term.
+func TestPluginRendersNamespaced(t *testing.T) {
+	out := buildFixture(t)
+
+	// Internal artifacts render namespaced by plugin (no collision with core).
+	for _, page := range []string{
+		"agents/acme/linter/index.html",
+		"skills/acme/format/index.html",
+		"plugins/acme/mcp/index.html",
+		"plugins/acme/index.html", // the manifest page
+	} {
+		if _, err := os.Stat(filepath.Join(out, page)); err != nil {
+			t.Errorf("expected plugin page %s: %v", page, err)
+		}
+	}
+
+	// The manifest page renders metadata and lists the plugin's components.
+	manifest := read(t, filepath.Join(out, "plugins/acme/index.html"))
+	for _, want := range []string{"acme-tools", "1.0.0", "Acme", "agents/acme/linter/"} {
+		if !strings.Contains(manifest, want) {
+			t.Errorf("plugin manifest page missing %q", want)
+		}
+	}
+
+	// Source taxonomy groups the plugin's artifacts under its name.
+	if _, err := os.Stat(filepath.Join(out, "sources/acme/index.html")); err != nil {
+		t.Errorf("expected source term for plugin acme: %v", err)
 	}
 }
 

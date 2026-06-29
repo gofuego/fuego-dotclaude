@@ -13,6 +13,9 @@ routes:
   mcp: "/mcp"
   settings: "/settings"
   settings-local: "/settings/local"
+  plugin: "/plugins/{slug}"
+  plugin-mcp: "/plugins/{slug}/mcp"
+  marketplace: "/marketplaces/{slug}"
 
 # Faceted navigation. Taxonomy keys match the envelope fields the AfterParse
 # hook normalizes: tools (agents' tools + commands' allowed-tools), model, and

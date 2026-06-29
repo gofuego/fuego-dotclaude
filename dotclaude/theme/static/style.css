@@ -175,3 +175,7 @@ ul.ref-list, ul.term-list { list-style: none; padding: 0; margin: 0; }
 ul.ref-list li, ul.term-list li { padding: 0.25rem 0; display: flex; align-items: center; gap: 0.5rem; }
 .ref-kind { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); }
 .term-list .count { font-size: 0.75rem; color: var(--muted); background: var(--code-bg); border-radius: 999px; padding: 0.05rem 0.5rem; }
+
+/* Plugins */
+.kind-plugin { background: #db61a226; color: #db61a2; }
+.version { font-size: 0.9rem; color: var(--muted); font-weight: 400; }
