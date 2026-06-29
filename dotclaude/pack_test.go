@@ -47,7 +47,7 @@ description: Structured review workflow.
 ---
 
 # Code Review
-See the bundled checklist.
+See the bundled checklist. Pairs well with the code-reviewer agent.
 `)
 	writeFile(t, content, "skills/code-review/checklist.md", `# Checklist
 - Correctness first.
@@ -192,6 +192,22 @@ func TestMalformedJSONDegrades(t *testing.T) {
 	}
 	if !strings.Contains(mcp, "broken") {
 		t.Error("malformed mcp page should still show the raw source")
+	}
+}
+
+// TestCrossReferenceLinks checks that a mention of an artifact's name in another
+// page's prose is rewritten into a link to that artifact's page.
+func TestCrossReferenceLinks(t *testing.T) {
+	out := buildFixture(t)
+
+	// The code-review skill body mentions "code-reviewer", which should link to
+	// the agent's page.
+	skill := read(t, filepath.Join(out, "skills/code-review/index.html"))
+	if !strings.Contains(skill, `href="agents/code-reviewer/"`) {
+		t.Errorf("skill body should auto-link the code-reviewer agent; got:\n%s", skill)
+	}
+	if !strings.Contains(skill, "slug-link") {
+		t.Error("auto-link should carry the slug-link class")
 	}
 }
 

@@ -28,8 +28,9 @@ func Pack() core.Pack {
 		Theme:          theme,
 		ConfigDefaults: configDefaults,
 		Hooks: core.Hooks{
-			AfterParse: []core.AfterParseHook{AfterParseHook()},
-			Index:      []core.IndexHook{IndexHook()},
+			AfterParse:   []core.AfterParseHook{AfterParseHook()},
+			Index:        []core.IndexHook{IndexHook()},
+			BeforeRender: []core.BeforeRenderHook{LinkHook()},
 		},
 	}
 }

@@ -155,3 +155,8 @@ table.kv th { color: var(--muted); font-weight: 500; white-space: nowrap; }
 details.raw-json { margin-top: 1.5rem; border-top: 1px solid var(--border); padding-top: 1rem; }
 details.raw-json summary { cursor: pointer; color: var(--muted); }
 details.raw-json pre { margin-top: 0.75rem; }
+
+/* Cross-reference auto-links */
+.slug-link { border-bottom: 1px dotted var(--accent); text-decoration: none; }
+.slug-link:hover { text-decoration: none; border-bottom-style: solid; }
+.slug-link.slug-ambiguous { border-bottom-color: var(--muted); color: var(--muted); }
