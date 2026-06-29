@@ -160,3 +160,11 @@ details.raw-json pre { margin-top: 0.75rem; }
 .slug-link { border-bottom: 1px dotted var(--accent); text-decoration: none; }
 .slug-link:hover { text-decoration: none; border-bottom-style: solid; }
 .slug-link.slug-ambiguous { border-bottom-color: var(--muted); color: var(--muted); }
+
+/* Home + catalog */
+.catalog { margin-top: 2.5rem; border-top: 1px solid var(--border); padding-top: 1.5rem; }
+.catalog-section { margin-bottom: 1.5rem; }
+.catalog-section h3 { font-size: 1rem; display: flex; align-items: center; gap: 0.5rem; }
+.catalog-section .count { font-size: 0.75rem; color: var(--muted); background: var(--code-bg); border-radius: 999px; padding: 0.05rem 0.5rem; }
+ul.catalog-list { list-style: none; padding: 0; margin: 0.25rem 0 0; display: grid; gap: 0.2rem 1.5rem; grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr)); }
+ul.catalog-list li { padding: 0.15rem 0; }

@@ -65,6 +65,7 @@ description: Terse responses.
 Lead with the answer.
 `)
 	writeFile(t, content, "CLAUDE.md", "# Workspace memory\nProject conventions live here.\n")
+	writeFile(t, content, "CLAUDE.local.md", "# Local memory\nMachine-specific notes.\n")
 	writeFile(t, content, ".mcp.json", `{
   "mcpServers": {
     "github": { "command": "npx", "args": ["-y", "server-github"], "env": {"TOKEN": "x"} },
@@ -115,7 +116,7 @@ func TestPackRendersEveryArtifactType(t *testing.T) {
 		{"skills/code-review/checklist/index.html", []string{"Checklist"}},
 		{"commands/git/commit/index.html", []string{"/git:commit", "conventional commit"}},
 		{"output-styles/concise/index.html", []string{"Concise", "Lead with the answer"}},
-		{"memory/CLAUDE/index.html", []string{"Workspace memory"}},
+		{"memory/CLAUDE.local/index.html", []string{"Local memory"}},
 	}
 	for _, c := range cases {
 		t.Run(c.page, func(t *testing.T) {
@@ -192,6 +193,50 @@ func TestMalformedJSONDegrades(t *testing.T) {
 	}
 	if !strings.Contains(mcp, "broken") {
 		t.Error("malformed mcp page should still show the raw source")
+	}
+}
+
+// TestHomeIsClaudeMdPlusCatalog checks that the top-level CLAUDE.md is rendered
+// at "/" followed by a catalog grouping artifacts by type with counts, and that
+// the re-homed CLAUDE.md no longer renders at its memory route.
+func TestHomeIsClaudeMdPlusCatalog(t *testing.T) {
+	out := buildFixture(t)
+
+	home := read(t, filepath.Join(out, "index.html"))
+	for _, want := range []string{
+		"Workspace memory",            // the CLAUDE.md body
+		"Catalog",                     // generated catalog
+		"Agents",                      // a section
+		`href="agents/code-reviewer/"`, // a catalog link
+	} {
+		if !strings.Contains(home, want) {
+			t.Errorf("home page missing %q", want)
+		}
+	}
+
+	// The CLAUDE.md used as home is not also emitted at /memory/CLAUDE/.
+	if _, err := os.Stat(filepath.Join(out, "memory/CLAUDE/index.html")); err == nil {
+		t.Error("home CLAUDE.md should not also render at /memory/CLAUDE/")
+	}
+}
+
+// TestHomeDashboardWithoutClaudeMd checks that, with no CLAUDE.md anywhere, "/"
+// is a generated dashboard carrying the catalog.
+func TestHomeDashboardWithoutClaudeMd(t *testing.T) {
+	dir := t.TempDir()
+	content := filepath.Join(dir, ".claude")
+	out := filepath.Join(dir, "out")
+	writeFile(t, content, "agents/reviewer.md", "---\nname: reviewer\n---\nReviews.\n")
+
+	eng := engine.New()
+	eng.Use(dotclaude.Pack())
+	if err := eng.Build(context.Background(), engine.BuildOptions{ContentDir: content, OutputDir: out, SiteName: "X"}); err != nil {
+		t.Fatal(err)
+	}
+
+	home := read(t, filepath.Join(out, "index.html"))
+	if !strings.Contains(home, "Catalog") || !strings.Contains(home, `href="agents/reviewer/"`) {
+		t.Errorf("dashboard should show the catalog with the agent; got:\n%s", home)
 	}
 }
 

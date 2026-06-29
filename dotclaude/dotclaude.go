@@ -29,7 +29,7 @@ func Pack() core.Pack {
 		ConfigDefaults: configDefaults,
 		Hooks: core.Hooks{
 			AfterParse:   []core.AfterParseHook{AfterParseHook()},
-			Index:        []core.IndexHook{IndexHook()},
+			Index:        []core.IndexHook{IndexHook(), HomeHook()},
 			BeforeRender: []core.BeforeRenderHook{LinkHook()},
 		},
 	}

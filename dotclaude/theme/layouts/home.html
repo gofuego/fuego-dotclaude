@@ -1,0 +1,30 @@
+{{define "content"}}
+<div class="home">
+  {{if .Page.Envelope.is_dashboard}}
+  <div class="artifact-header">
+    <h1>{{.Site.Name}}</h1>
+    <p class="description">A generated overview of this <code>.claude</code> directory.</p>
+  </div>
+  {{else}}
+  <div class="prose">
+    {{.Page.Content}}
+  </div>
+  {{end}}
+
+  {{with .Page.Envelope.catalog}}
+  <section class="catalog">
+    <h2>Catalog</h2>
+    {{range .}}
+    <div class="catalog-section">
+      <h3>{{.label}} <span class="count">{{.count}}</span></h3>
+      <ul class="catalog-list">
+        {{range .items}}<li><a href="{{.url}}">{{.name}}</a></li>{{end}}
+      </ul>
+    </div>
+    {{end}}
+  </section>
+  {{else}}
+  <p class="muted">No artifacts found in this <code>.claude</code> directory.</p>
+  {{end}}
+</div>
+{{end}}
