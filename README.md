@@ -26,15 +26,19 @@ fuego-dotclaude serve            # live-reloading preview
 # Or point at something explicitly.
 fuego-dotclaude build path/to/project   # a repo containing .claude/
 fuego-dotclaude build ~/.claude         # a .claude directly -> isolated
+fuego-dotclaude build path/to/ai        # a dedicated repo that IS the .claude,
+                                        # under a different name -> isolated
 ```
 
-Detection rules:
+Detection rules (default argument is the current directory):
 
-- **no argument** → the current directory (expects `./.claude`; folds in siblings)
-- **argument contains `.claude/`** → `<arg>/.claude`, with the root-level
+- **a directory containing `.claude/`** → `<arg>/.claude`, with the root-level
   `CLAUDE.md`, `CLAUDE.local.md`, and `.mcp.json` folded in
-- **argument is a `.claude` directory** → that directory, in isolation
-- no `.claude` found → an error (nothing is rendered)
+- **a `.claude` directory** → that directory, in isolation
+- **any other directory** → rendered as the content root, in isolation — for a
+  dedicated repo that holds the `.claude` layout under a different name (e.g. an
+  `ai/` repo)
+- a path that isn't a directory → an error
 - `--siblings` / `--no-siblings` override the sibling default
 
 ### Commands

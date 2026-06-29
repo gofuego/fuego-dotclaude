@@ -37,9 +37,12 @@ func (OSFS) IsDir(path string) bool {
 
 // Resolve maps an argument and an optional siblings override into a Resolution:
 //
-//   - arg is a .claude  → that directory, isolated (no siblings)
-//   - arg has .claude/  → <arg>/.claude, project (siblings on)
-//   - otherwise         → error (no .claude found)
+//   - arg contains .claude/  → <arg>/.claude, project (siblings on)
+//   - arg is a .claude dir   → that directory, isolated (no siblings)
+//   - arg is any other dir   → that directory treated as the content root,
+//                              isolated (the "dedicated .claude repo under a
+//                              different name" case, e.g. an ai/ repo)
+//   - arg is not a directory  → error
 //
 // An empty arg means the current directory ("."). A non-nil siblingsFlag (from
 // --siblings/--no-siblings) overrides the default.
@@ -50,12 +53,14 @@ func Resolve(fsys FS, arg string, siblingsFlag *bool) (Resolution, error) {
 
 	var r Resolution
 	switch {
-	case filepath.Base(arg) == ".claude" && fsys.IsDir(arg):
-		r = Resolution{ContentDir: arg, Mode: "isolated"}
 	case fsys.IsDir(filepath.Join(arg, ".claude")):
 		r = Resolution{ContentDir: filepath.Join(arg, ".claude"), Mode: "project", Siblings: true}
+	case filepath.Base(arg) == ".claude" && fsys.IsDir(arg):
+		r = Resolution{ContentDir: arg, Mode: "isolated"}
+	case fsys.IsDir(arg):
+		r = Resolution{ContentDir: arg, Mode: "isolated"}
 	default:
-		return r, fmt.Errorf("no .claude directory found at %q (run from a project containing .claude/, or pass a path to one)", arg)
+		return r, fmt.Errorf("%q is not a directory", arg)
 	}
 
 	r.SiblingDir = filepath.Dir(r.ContentDir)
