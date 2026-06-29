@@ -74,11 +74,15 @@ reference hook scans bodies (without rewriting), attaches "Referenced by" to eac
 page, and appends collision-checked virtual pages (disambiguation pages, the
 `/references/` graph). The body rewrite still happens in BEFORE-RENDER.
 
-### AD-6: JSON artifacts decode through a tolerant model
+### AD-6: Parsing is tolerant — one bad file never fails the build
 
 `jsonmodel` decodes `.mcp.json`, settings, and plugin/marketplace manifests,
 preserving unknown keys (settings' long tail) and reporting malformed input so
-pages degrade to a raw view instead of failing the build.
+pages degrade to a raw view. Markdown frontmatter is just as forgiving: Claude
+Code agent frontmatter routinely has unquoted descriptions with colons that
+aren't valid YAML, so an unparseable block degrades to an empty envelope with the
+raw block preserved (`frontmatter_raw`) and a per-file warning, rather than
+failing the build. Strictness is opt-in via the `validate` command.
 
 ### AD-7: Scope resolution is a deep module
 

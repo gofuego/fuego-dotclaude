@@ -255,6 +255,37 @@ func TestValidationIsAdvisory(t *testing.T) {
 	}
 }
 
+// TestInvalidFrontmatterDegrades verifies that an agent whose frontmatter is not
+// valid YAML (a common case: an unquoted description containing a colon) does
+// not fail the build — the page still renders and the raw block is preserved.
+func TestInvalidFrontmatterDegrades(t *testing.T) {
+	dir := t.TempDir()
+	content := filepath.Join(dir, ".claude")
+	out := filepath.Join(dir, "out")
+	writeFile(t, content, "agents/messy.md", `---
+name: messy
+description: Use this agent when: you need to do X
+---
+
+# Messy
+Body still renders.
+`)
+
+	eng := engine.New()
+	eng.Use(dotclaude.Pack())
+	if err := eng.Build(context.Background(), engine.BuildOptions{ContentDir: content, OutputDir: out, SiteName: "X"}); err != nil {
+		t.Fatalf("build should not fail on invalid frontmatter: %v", err)
+	}
+
+	page := read(t, filepath.Join(out, "agents/messy/index.html"))
+	if !strings.Contains(page, "Body still renders") {
+		t.Error("body should render despite bad frontmatter")
+	}
+	if !strings.Contains(page, "Frontmatter not parsed") {
+		t.Error("page should surface a frontmatter warning")
+	}
+}
+
 // TestMalformedJSONDegrades verifies a broken JSON file does not fail the build:
 // the page still renders, reporting the error and showing the raw source.
 func TestMalformedJSONDegrades(t *testing.T) {

@@ -1,6 +1,7 @@
 package dotclaude
 
 import (
+	"fmt"
 	"io/fs"
 	"path"
 	"path/filepath"
@@ -19,6 +20,11 @@ import (
 func AfterParseHook() core.AfterParseHook {
 	return func(pages []*core.Page) ([]*core.Page, error) {
 		for _, p := range pages {
+			// Surface tolerant-parse fallbacks (bad frontmatter) as warnings.
+			if fe, _ := p.Envelope["frontmatter_error"].(string); fe != "" {
+				fmt.Printf("fuego-dotclaude: warning: %s: %s\n", p.RelPath, fe)
+			}
+
 			// Injected siblings classify and enrich themselves; don't reprocess.
 			if sib, _ := p.Envelope["sibling"].(bool); sib {
 				continue

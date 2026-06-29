@@ -22,6 +22,7 @@
   <div class="layout">
     <aside class="sidebar">{{if .Page.Envelope.sidebar}}{{safeHTML .Page.Envelope.sidebar}}{{end}}</aside>
     <main class="content">
+      {{template "fm-warning" .}}
       {{template "content" .}}
       {{template "backlinks" .}}
     </main>
@@ -47,6 +48,7 @@
 </body>
 </html>
 {{define "content"}}<div class="prose">{{.Page.Content}}</div>{{end}}
+{{define "fm-warning"}}{{with .Page.Envelope.frontmatter_error}}<div class="parse-error"><strong>Frontmatter not parsed.</strong> {{.}}{{with $.Page.Envelope.frontmatter_raw}}<details><summary>show raw frontmatter</summary><pre><code>{{.}}</code></pre></details>{{end}}</div>{{end}}{{end}}
 {{define "backlinks"}}{{with .Page.Envelope.referenced_by}}<section class="backlinks">
   <h2>Referenced by</h2>
   <ul class="ref-list">{{range .}}<li><a href="{{.url}}">{{.title}}</a> <span class="ref-kind">{{.kind}}</span></li>{{end}}</ul>
