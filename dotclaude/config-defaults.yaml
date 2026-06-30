@@ -3,6 +3,17 @@
 # overridden. Routes are keyed by the artifact type the AfterParse hook assigns;
 # the hook also sets a path-derived {slug}, so artifacts nest under their
 # section and never collide.
+
+# Skip version control, dependencies, caches, and our own output when a whole
+# repo is the content root.
+ignore:
+  - "**/.git"
+  - "**/node_modules"
+  - "**/.DS_Store"
+  - ".fuego"
+  - ".github"
+  - "build"
+
 routes:
   agent: "/agents/{slug}"
   skill: "/skills/{slug}"
