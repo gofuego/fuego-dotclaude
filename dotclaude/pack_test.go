@@ -505,3 +505,31 @@ func TestSkillBundledFiles(t *testing.T) {
 		t.Error("skill doc should back-link to its skill")
 	}
 }
+
+// TestEmptyTaxonomyHubsExist is the regression for the dead-topbar-link bug:
+// when no artifact declares tools or a model, the /tools/ and /models/ hub
+// pages must still be generated, because the theme's topbar links to every
+// hub from every page. Relies on fuego >= v0.4.6, where a taxonomy's
+// index_path page is generated even with no terms.
+func TestEmptyTaxonomyHubsExist(t *testing.T) {
+	dir := t.TempDir()
+	content := filepath.Join(dir, ".claude")
+	out := filepath.Join(dir, "out")
+	writeFile(t, content, "agents/helper.md", "---\nname: helper\ndescription: A plain agent.\n---\nNo tools, no model.\n")
+
+	eng := engine.New()
+	eng.Use(dotclaude.Pack())
+	if err := eng.Build(context.Background(), engine.BuildOptions{
+		ContentDir: content,
+		OutputDir:  out,
+		SiteName:   "Workspace",
+	}); err != nil {
+		t.Fatalf("build failed: %v", err)
+	}
+
+	for _, hub := range []string{"tools", "models", "sources", "references"} {
+		if _, err := os.Stat(filepath.Join(out, hub, "index.html")); err != nil {
+			t.Errorf("topbar hub /%s/ missing: %v", hub, err)
+		}
+	}
+}
