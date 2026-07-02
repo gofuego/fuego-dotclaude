@@ -136,7 +136,7 @@ fuego-dotclaude/
 
 ## Dependency note
 
-Fuego is pinned to a tagged release (`github.com/gofuego/fuego v0.4.5`) and
+Fuego is pinned to a tagged release (`github.com/gofuego/fuego v0.4.6`) and
 resolved from the module proxy, so CI (`gofuego/.github` `go-ci.yml`) and
 `go install` work without the workspace checkout. To develop against an
 unreleased Fuego, add a temporary `replace github.com/gofuego/fuego => ../fuego`
