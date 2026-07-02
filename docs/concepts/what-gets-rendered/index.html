@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <base href="/fuego-dotclaude/">
+    <title>What Gets Rendered — fuego-dotclaude</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="alternate" type="application/rss+xml" title="fuego-dotclaude" href="rss.xml">
+</head>
+<body>
+<header>
+    <nav>
+        <a href="." class="logo">fuego-dotclaude</a>
+        <ul>
+            <li><a href="docs/getting-started/">Get Started</a></li>
+            <li><a href="https://github.com/gofuego/fuego-dotclaude">GitHub</a></li>
+        </ul>
+    </nav>
+</header>
+
+<div class="layout">
+    
+<nav class="sidebar" aria-label="Documentation">
+    
+    <div class="nav-group">
+        <p class="nav-heading">Getting Started</p>
+        <ul>
+            <li><a href="/fuego-dotclaude/docs/getting-started/">Getting Started</a></li>
+        </ul>
+    </div>
+    
+    <div class="nav-group">
+        <p class="nav-heading">Concepts</p>
+        <ul>
+            <li><a href="/fuego-dotclaude/docs/concepts/what-gets-rendered/" class="current">What Gets Rendered</a></li>
+            <li><a href="/fuego-dotclaude/docs/concepts/cross-references/">Cross-References</a></li>
+            <li><a href="/fuego-dotclaude/docs/concepts/scope-detection/">Scope Detection</a></li>
+        </ul>
+    </div>
+    
+    <div class="nav-group">
+        <p class="nav-heading">Guides</p>
+        <ul>
+            <li><a href="/fuego-dotclaude/docs/guides/browse-by-taxonomy/">Browse by Taxonomy</a></li>
+            <li><a href="/fuego-dotclaude/docs/guides/settings-and-mcp/">Settings &amp; MCP Pages</a></li>
+            <li><a href="/fuego-dotclaude/docs/guides/validate-in-ci/">Validate in CI</a></li>
+            <li><a href="/fuego-dotclaude/docs/guides/publish-your-workspace/">Publish Your Workspace</a></li>
+        </ul>
+    </div>
+    
+    <div class="nav-group">
+        <p class="nav-heading">Reference</p>
+        <ul>
+            <li><a href="/fuego-dotclaude/docs/reference/cli/">CLI Reference</a></li>
+            <li><a href="/fuego-dotclaude/docs/reference/configuration/">Configuration</a></li>
+            <li><a href="/fuego-dotclaude/docs/reference/use-as-a-pack/">Use as a Pack</a></li>
+        </ul>
+    </div>
+</nav>
+
+    <main>
+    
+<article class="doc">
+    <h1>What Gets Rendered</h1>
+    <p>Coverage is exhaustive and recursive: everything in the <code>.claude</code> directory that means something to Claude Code becomes a page, including the internals of installed plugins.</p>
+<h2>The coverage map</h2>
+<table>
+<thead>
+<tr>
+<th>In your <code>.claude</code></th>
+<th>Becomes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>agents/&lt;name&gt;.md</code></td>
+<td><code>/agents/&lt;name&gt;/</code></td>
+</tr>
+<tr>
+<td><code>skills/&lt;name&gt;/SKILL.md</code></td>
+<td><code>/skills/&lt;name&gt;/</code></td>
+</tr>
+<tr>
+<td><code>skills/&lt;name&gt;/&lt;doc&gt;.md</code></td>
+<td><code>/skills/&lt;name&gt;/&lt;doc&gt;/</code> — a routed sub-page, linked from the skill</td>
+</tr>
+<tr>
+<td><code>skills/&lt;name&gt;/&lt;asset&gt;</code> (scripts, data)</td>
+<td>copied verbatim, linked from the skill</td>
+</tr>
+<tr>
+<td><code>commands/&lt;ns&gt;/&lt;name&gt;.md</code></td>
+<td><code>/commands/&lt;ns&gt;/&lt;name&gt;/</code> — shown as <code>/&lt;ns&gt;:&lt;name&gt;</code></td>
+</tr>
+<tr>
+<td><code>output-styles/&lt;name&gt;.md</code></td>
+<td><code>/output-styles/&lt;name&gt;/</code></td>
+</tr>
+<tr>
+<td><code>CLAUDE.md</code>, <code>CLAUDE.local.md</code>, other <code>.md</code></td>
+<td><code>/memory/&lt;name&gt;/</code> (unless promoted to home)</td>
+</tr>
+<tr>
+<td><code>.mcp.json</code></td>
+<td><code>/mcp/</code> — one card per server</td>
+</tr>
+<tr>
+<td><code>settings.json</code></td>
+<td><code>/settings/</code></td>
+</tr>
+<tr>
+<td><code>settings.local.json</code></td>
+<td><code>/settings/local/</code></td>
+</tr>
+<tr>
+<td><code>plugins/&lt;plugin&gt;/plugin.json</code></td>
+<td><code>/plugins/&lt;plugin&gt;/</code></td>
+</tr>
+<tr>
+<td><code>plugins/&lt;plugin&gt;/agents/…</code>, <code>skills/…</code>, <code>commands/…</code></td>
+<td>first-class pages under their own sections, namespaced by plugin</td>
+</tr>
+<tr>
+<td><code>plugins/&lt;plugin&gt;/.mcp.json</code></td>
+<td><code>/plugins/&lt;plugin&gt;/mcp/</code></td>
+</tr>
+<tr>
+<td><code>marketplace.json</code></td>
+<td><code>/marketplaces/&lt;name&gt;/</code></td>
+</tr>
+</tbody>
+</table>
+<p>Intermediate directories that no page claims (e.g. <code>/agents/</code>, <code>/commands/git/</code>) get a generated <strong>section page</strong> listing their contents, so nothing in the sidebar is a dead end.</p>
+<h2>The home page</h2>
+<p>The site's home (<code>/</code>) is your top-level <code>CLAUDE.md</code> — the <strong>project-root sibling wins</strong> over <code>.claude/CLAUDE.md</code> — followed by a generated catalog grouped by kind (Agents, Commands, Skills, Output Styles, Memory, MCP, Settings, Plugins, Marketplaces). If no <code>CLAUDE.md</code> exists anywhere, a generated dashboard takes its place. Memory files that aren't promoted to home keep their normal <code>/memory/</code> routes.</p>
+<h2>Sibling files</h2>
+<p>When you build a project (rather than an isolated <code>.claude</code>), three root-level files are folded in from one directory above: <code>CLAUDE.md</code>, <code>CLAUDE.local.md</code>, and <code>.mcp.json</code>. They render as pages like everything else, labeled as coming from the project root. <a href="docs/concepts/scope-detection/">Scope Detection</a> covers when this happens automatically.</p>
+<h2>Plugins are rendered recursively</h2>
+<p>An installed plugin isn't a single page — its internal agents, skills, and commands are rendered with the <strong>same layouts and routes</strong> as your project's own artifacts, namespaced by plugin (<code>/agents/&lt;plugin&gt;/&lt;name&gt;/</code>-style slugs, <code>source</code> set to the plugin's name). The plugin page itself renders the manifest; a plugin's <code>.mcp.json</code> gets its own server-card page. This means the <a href="docs/guides/browse-by-taxonomy/">taxonomies</a> and <a href="docs/concepts/cross-references/">cross-references</a> treat plugin artifacts as first-class citizens.</p>
+<h2>Tolerant by design — one bad file never fails the build</h2>
+<p>Claude Code frontmatter in the wild routinely has unquoted descriptions with colons that aren't valid YAML. An unparseable frontmatter block degrades to an empty envelope with the raw block preserved and a per-file warning — the page still renders. Malformed JSON degrades to a raw view of the file. Strictness is opt-in through the <a href="docs/guides/validate-in-ci/">validate command</a>.</p>
+<h2>What's ignored</h2>
+<p>Version control and dependency directories never become content: <code>**/.git</code>, <code>**/node_modules</code>, <code>**/.DS_Store</code>, <code>.fuego</code>, <code>.github</code>, and <code>build</code> are ignored by default — which is what makes it safe to render a whole repo as the content root.</p>
+
+</article>
+
+    </main>
+</div>
+<footer>
+    <p>Built with Fuego — the format-agnostic static site engine.</p>
+</footer>
+</body>
+</html>

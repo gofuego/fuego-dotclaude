@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <base href="/fuego-dotclaude/">
+    <title>Browse by Taxonomy — fuego-dotclaude</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="alternate" type="application/rss+xml" title="fuego-dotclaude" href="rss.xml">
+</head>
+<body>
+<header>
+    <nav>
+        <a href="." class="logo">fuego-dotclaude</a>
+        <ul>
+            <li><a href="docs/getting-started/">Get Started</a></li>
+            <li><a href="https://github.com/gofuego/fuego-dotclaude">GitHub</a></li>
+        </ul>
+    </nav>
+</header>
+
+<div class="layout">
+    
+<nav class="sidebar" aria-label="Documentation">
+    
+    <div class="nav-group">
+        <p class="nav-heading">Getting Started</p>
+        <ul>
+            <li><a href="/fuego-dotclaude/docs/getting-started/">Getting Started</a></li>
+        </ul>
+    </div>
+    
+    <div class="nav-group">
+        <p class="nav-heading">Concepts</p>
+        <ul>
+            <li><a href="/fuego-dotclaude/docs/concepts/what-gets-rendered/">What Gets Rendered</a></li>
+            <li><a href="/fuego-dotclaude/docs/concepts/cross-references/">Cross-References</a></li>
+            <li><a href="/fuego-dotclaude/docs/concepts/scope-detection/">Scope Detection</a></li>
+        </ul>
+    </div>
+    
+    <div class="nav-group">
+        <p class="nav-heading">Guides</p>
+        <ul>
+            <li><a href="/fuego-dotclaude/docs/guides/browse-by-taxonomy/" class="current">Browse by Taxonomy</a></li>
+            <li><a href="/fuego-dotclaude/docs/guides/settings-and-mcp/">Settings &amp; MCP Pages</a></li>
+            <li><a href="/fuego-dotclaude/docs/guides/validate-in-ci/">Validate in CI</a></li>
+            <li><a href="/fuego-dotclaude/docs/guides/publish-your-workspace/">Publish Your Workspace</a></li>
+        </ul>
+    </div>
+    
+    <div class="nav-group">
+        <p class="nav-heading">Reference</p>
+        <ul>
+            <li><a href="/fuego-dotclaude/docs/reference/cli/">CLI Reference</a></li>
+            <li><a href="/fuego-dotclaude/docs/reference/configuration/">Configuration</a></li>
+            <li><a href="/fuego-dotclaude/docs/reference/use-as-a-pack/">Use as a Pack</a></li>
+        </ul>
+    </div>
+</nav>
+
+    <main>
+    
+<article class="doc">
+    <h1>Browse by Taxonomy</h1>
+    <p>Beyond the file-tree sidebar, the site groups artifacts along three axes, each with a hub page and a page per value. The hubs are linked from the topbar of every page.</p>
+<h2><code>/tools/</code> — by tool</h2>
+<p>Groups agents and commands by the tools they declare — an agent's <code>tools:</code> frontmatter and a command's <code>allowed-tools</code>. Answers &quot;which of my agents can run Bash?&quot; and &quot;what would be affected if I revoked WebFetch?&quot;</p>
+<h2><code>/models/</code> — by model</h2>
+<p>Groups artifacts by their <code>model:</code> frontmatter (<code>opus</code>, <code>sonnet</code>, <code>haiku</code>, …). Useful for spotting which agents are pinned to which model tier before a model migration.</p>
+<h2><code>/sources/</code> — by provenance</h2>
+<p>Every artifact is stamped with where it came from: your project itself, or the name of the plugin that shipped it. The source hub is how you see at a glance what an installed plugin actually added to your workspace.</p>
+<h2>The hubs always exist</h2>
+<p>The hub pages (<code>/tools/</code>, <code>/models/</code>, <code>/sources/</code>) are generated even when empty — a workspace where no agent declares tools still gets a <code>/tools/</code> page (with no entries) rather than a dead topbar link. Value pages (<code>/tools/bash/</code>, <code>/models/opus/</code>) exist only for values that actually appear.</p>
+<h2>Where the values come from</h2>
+<p>The taxonomy fields are normalized from each artifact's frontmatter during the build — you don't annotate anything. If an agent declares no <code>tools</code> or <code>model</code>, it simply doesn't appear in those hubs (agents that inherit all tools by omitting <code>tools:</code> are not listed under every tool).</p>
+
+</article>
+
+    </main>
+</div>
+<footer>
+    <p>Built with Fuego — the format-agnostic static site engine.</p>
+</footer>
+</body>
+</html>

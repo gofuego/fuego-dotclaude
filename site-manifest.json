@@ -1,0 +1,204 @@
+{
+  "content_root": "docs/content",
+  "pages": [
+    {
+      "url": "/",
+      "type": "md",
+      "layout": "home",
+      "source_path": "index.md",
+      "output_path": "index.html",
+      "title": "See your Claude Code workspace",
+      "envelope": {
+        "cta": [
+          {
+            "label": "Get started",
+            "url": "/docs/getting-started/"
+          },
+          {
+            "ghost": true,
+            "label": "CLI reference",
+            "url": "/docs/reference/cli/"
+          }
+        ],
+        "layout": "home",
+        "title": "See your Claude Code workspace"
+      }
+    },
+    {
+      "url": "/docs/concepts/cross-references/",
+      "type": "md",
+      "layout": "doc",
+      "source_path": "docs/concepts/cross-references.md",
+      "output_path": "docs/concepts/cross-references/index.html",
+      "title": "Cross-References",
+      "summary": "Whole-word mentions of artifact names become links; backlinks, disambiguation pages, and the global reference graph make the web navigable in both directions.",
+      "envelope": {
+        "layout": "doc",
+        "nav_section": "Concepts",
+        "nav_weight": 2,
+        "summary": "Whole-word mentions of artifact names become links; backlinks, disambiguation pages, and the global reference graph make the web navigable in both directions.",
+        "title": "Cross-References"
+      }
+    },
+    {
+      "url": "/docs/concepts/scope-detection/",
+      "type": "md",
+      "layout": "doc",
+      "source_path": "docs/concepts/scope-detection.md",
+      "output_path": "docs/concepts/scope-detection/index.html",
+      "title": "Scope Detection",
+      "summary": "How the CLI decides what to build from the path you give it — the four resolution rules, project vs. isolated mode, and the sibling toggle.",
+      "envelope": {
+        "layout": "doc",
+        "nav_section": "Concepts",
+        "nav_weight": 3,
+        "summary": "How the CLI decides what to build from the path you give it — the four resolution rules, project vs. isolated mode, and the sibling toggle.",
+        "title": "Scope Detection"
+      }
+    },
+    {
+      "url": "/docs/concepts/what-gets-rendered/",
+      "type": "md",
+      "layout": "doc",
+      "source_path": "docs/concepts/what-gets-rendered.md",
+      "output_path": "docs/concepts/what-gets-rendered/index.html",
+      "title": "What Gets Rendered",
+      "summary": "The coverage map — every artifact kind in a .claude directory and the page route it becomes.",
+      "envelope": {
+        "layout": "doc",
+        "nav_section": "Concepts",
+        "nav_weight": 1,
+        "summary": "The coverage map — every artifact kind in a .claude directory and the page route it becomes.",
+        "title": "What Gets Rendered"
+      }
+    },
+    {
+      "url": "/docs/getting-started/",
+      "type": "md",
+      "layout": "doc",
+      "source_path": "docs/getting-started.md",
+      "output_path": "docs/getting-started/index.html",
+      "title": "Getting Started",
+      "summary": "Install the CLI, point it at a project or a .claude directory, and browse the generated site.",
+      "envelope": {
+        "layout": "doc",
+        "nav_section": "Getting Started",
+        "nav_weight": 1,
+        "summary": "Install the CLI, point it at a project or a .claude directory, and browse the generated site.",
+        "title": "Getting Started"
+      }
+    },
+    {
+      "url": "/docs/guides/browse-by-taxonomy/",
+      "type": "md",
+      "layout": "doc",
+      "source_path": "docs/guides/browse-by-taxonomy.md",
+      "output_path": "docs/guides/browse-by-taxonomy/index.html",
+      "title": "Browse by Taxonomy",
+      "summary": "Three faceted hubs — tools, models, and sources — group artifacts by what they use and where they came from.",
+      "envelope": {
+        "layout": "doc",
+        "nav_section": "Guides",
+        "nav_weight": 1,
+        "summary": "Three faceted hubs — tools, models, and sources — group artifacts by what they use and where they came from.",
+        "title": "Browse by Taxonomy"
+      }
+    },
+    {
+      "url": "/docs/guides/publish-your-workspace/",
+      "type": "md",
+      "layout": "doc",
+      "source_path": "docs/guides/publish-your-workspace.md",
+      "output_path": "docs/guides/publish-your-workspace/index.html",
+      "title": "Publish Your Workspace",
+      "summary": "Build with a base URL, deploy to GitHub Pages, and review what the site exposes before making it public.",
+      "envelope": {
+        "layout": "doc",
+        "nav_section": "Guides",
+        "nav_weight": 4,
+        "summary": "Build with a base URL, deploy to GitHub Pages, and review what the site exposes before making it public.",
+        "title": "Publish Your Workspace"
+      }
+    },
+    {
+      "url": "/docs/guides/settings-and-mcp/",
+      "type": "md",
+      "layout": "doc",
+      "source_path": "docs/guides/settings-and-mcp.md",
+      "output_path": "docs/guides/settings-and-mcp/index.html",
+      "title": "Settings \u0026 MCP Pages",
+      "summary": "How the JSON configuration files render — server cards for .mcp.json, curated sections for settings, and graceful degradation for malformed input.",
+      "envelope": {
+        "layout": "doc",
+        "nav_section": "Guides",
+        "nav_weight": 2,
+        "summary": "How the JSON configuration files render — server cards for .mcp.json, curated sections for settings, and graceful degradation for malformed input.",
+        "title": "Settings \u0026 MCP Pages"
+      }
+    },
+    {
+      "url": "/docs/guides/validate-in-ci/",
+      "type": "md",
+      "layout": "doc",
+      "source_path": "docs/guides/validate-in-ci.md",
+      "output_path": "docs/guides/validate-in-ci/index.html",
+      "title": "Validate in CI",
+      "summary": "The validate command's diagnostics, what each one means, and how to gate a repository on a clean .claude tree with --strict.",
+      "envelope": {
+        "layout": "doc",
+        "nav_section": "Guides",
+        "nav_weight": 3,
+        "summary": "The validate command's diagnostics, what each one means, and how to gate a repository on a clean .claude tree with --strict.",
+        "title": "Validate in CI"
+      }
+    },
+    {
+      "url": "/docs/reference/cli/",
+      "type": "md",
+      "layout": "doc",
+      "source_path": "docs/reference/cli.md",
+      "output_path": "docs/reference/cli/index.html",
+      "title": "CLI Reference",
+      "summary": "Every command and flag — build, serve, validate, and list — plus the path resolution and config lookup they share.",
+      "envelope": {
+        "layout": "doc",
+        "nav_section": "Reference",
+        "nav_weight": 1,
+        "summary": "Every command and flag — build, serve, validate, and list — plus the path resolution and config lookup they share.",
+        "title": "CLI Reference"
+      }
+    },
+    {
+      "url": "/docs/reference/configuration/",
+      "type": "md",
+      "layout": "doc",
+      "source_path": "docs/reference/configuration.md",
+      "output_path": "docs/reference/configuration/index.html",
+      "title": "Configuration",
+      "summary": "The optional fuego-dotclaude.yaml — its three fields, where it's looked up, and the defaults that apply without it.",
+      "envelope": {
+        "layout": "doc",
+        "nav_section": "Reference",
+        "nav_weight": 2,
+        "summary": "The optional fuego-dotclaude.yaml — its three fields, where it's looked up, and the defaults that apply without it.",
+        "title": "Configuration"
+      }
+    },
+    {
+      "url": "/docs/reference/use-as-a-pack/",
+      "type": "md",
+      "layout": "doc",
+      "source_path": "docs/reference/use-as-a-pack.md",
+      "output_path": "docs/reference/use-as-a-pack/index.html",
+      "title": "Use as a Pack",
+      "summary": "Consume dotclaude.Pack() from your own Fuego project — one line for the full rendering, with your config and theme winning over the pack's.",
+      "envelope": {
+        "layout": "doc",
+        "nav_section": "Reference",
+        "nav_weight": 3,
+        "summary": "Consume dotclaude.Pack() from your own Fuego project — one line for the full rendering, with your config and theme winning over the pack's.",
+        "title": "Use as a Pack"
+      }
+    }
+  ]
+}

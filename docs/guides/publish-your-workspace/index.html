@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <base href="/fuego-dotclaude/">
+    <title>Publish Your Workspace — fuego-dotclaude</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="alternate" type="application/rss+xml" title="fuego-dotclaude" href="rss.xml">
+</head>
+<body>
+<header>
+    <nav>
+        <a href="." class="logo">fuego-dotclaude</a>
+        <ul>
+            <li><a href="docs/getting-started/">Get Started</a></li>
+            <li><a href="https://github.com/gofuego/fuego-dotclaude">GitHub</a></li>
+        </ul>
+    </nav>
+</header>
+
+<div class="layout">
+    
+<nav class="sidebar" aria-label="Documentation">
+    
+    <div class="nav-group">
+        <p class="nav-heading">Getting Started</p>
+        <ul>
+            <li><a href="/fuego-dotclaude/docs/getting-started/">Getting Started</a></li>
+        </ul>
+    </div>
+    
+    <div class="nav-group">
+        <p class="nav-heading">Concepts</p>
+        <ul>
+            <li><a href="/fuego-dotclaude/docs/concepts/what-gets-rendered/">What Gets Rendered</a></li>
+            <li><a href="/fuego-dotclaude/docs/concepts/cross-references/">Cross-References</a></li>
+            <li><a href="/fuego-dotclaude/docs/concepts/scope-detection/">Scope Detection</a></li>
+        </ul>
+    </div>
+    
+    <div class="nav-group">
+        <p class="nav-heading">Guides</p>
+        <ul>
+            <li><a href="/fuego-dotclaude/docs/guides/browse-by-taxonomy/">Browse by Taxonomy</a></li>
+            <li><a href="/fuego-dotclaude/docs/guides/settings-and-mcp/">Settings &amp; MCP Pages</a></li>
+            <li><a href="/fuego-dotclaude/docs/guides/validate-in-ci/">Validate in CI</a></li>
+            <li><a href="/fuego-dotclaude/docs/guides/publish-your-workspace/" class="current">Publish Your Workspace</a></li>
+        </ul>
+    </div>
+    
+    <div class="nav-group">
+        <p class="nav-heading">Reference</p>
+        <ul>
+            <li><a href="/fuego-dotclaude/docs/reference/cli/">CLI Reference</a></li>
+            <li><a href="/fuego-dotclaude/docs/reference/configuration/">Configuration</a></li>
+            <li><a href="/fuego-dotclaude/docs/reference/use-as-a-pack/">Use as a Pack</a></li>
+        </ul>
+    </div>
+</nav>
+
+    <main>
+    
+<article class="doc">
+    <h1>Publish Your Workspace</h1>
+    <p>A built site is plain static files — host it anywhere. The two things to get right are the base URL and knowing what you're publishing.</p>
+<h2>First: review what the site exposes</h2>
+<p>The site renders what your files contain. Before publishing anywhere public, check:</p>
+<ul>
+<li><strong><code>.mcp.json</code></strong> — server definitions often carry environment variables and internal URLs.</li>
+<li><strong><code>settings.local.json</code> and <code>CLAUDE.local.md</code></strong> — machine-local by convention, and often not meant to leave your machine.</li>
+<li><strong>Memory files</strong> — <code>CLAUDE.md</code> content is rendered in full, including anything sensitive you wrote down.</li>
+</ul>
+<p>There is no redaction pass. If a file shouldn't be public, don't publish the site publicly — or build from a tree that doesn't contain it.</p>
+<h2>Build for a subpath</h2>
+<p>A GitHub Pages <em>project</em> site serves under <code>/&lt;repo&gt;/</code>, so links need a base URL:</p>
+<pre><code class="language-bash">fuego-dotclaude build --base-url /my-repo -o build
+</code></pre>
+<p>For a root domain, omit <code>--base-url</code>. To make the setting sticky, put it in <a href="docs/reference/configuration/"><code>fuego-dotclaude.yaml</code></a> instead of the flag.</p>
+<h2>Deploy to GitHub Pages</h2>
+<p>A minimal workflow that builds on every push to <code>main</code> and publishes to a <code>gh-pages</code> branch:</p>
+<pre><code class="language-yaml">name: Publish workspace site
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: &quot;1.25&quot;
+      - run: go run github.com/gofuego/fuego-dotclaude@latest build --base-url /${{ github.event.repository.name }}
+      - uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: build
+          publish_branch: gh-pages
+</code></pre>
+<p>Then point the repository's Pages settings at the <code>gh-pages</code> branch. On a <strong>private</strong> repository, Pages needs a paid GitHub plan — an alternative is any static host, or an authenticating host in front of the built output.</p>
+<h2>Team workflow</h2>
+<p>Pair the deploy with <a href="docs/guides/validate-in-ci/"><code>validate --strict</code> on pull requests</a>: PRs gate on a coherent <code>.claude</code> tree, and the merged result publishes automatically. Since <a href="docs/concepts/scope-detection/">scope detection</a> folds the root <code>CLAUDE.md</code> in, the published site is the same thing a teammate sees running <code>fuego-dotclaude serve</code> locally.</p>
+
+</article>
+
+    </main>
+</div>
+<footer>
+    <p>Built with Fuego — the format-agnostic static site engine.</p>
+</footer>
+</body>
+</html>

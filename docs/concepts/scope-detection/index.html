@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <base href="/fuego-dotclaude/">
+    <title>Scope Detection — fuego-dotclaude</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="alternate" type="application/rss+xml" title="fuego-dotclaude" href="rss.xml">
+</head>
+<body>
+<header>
+    <nav>
+        <a href="." class="logo">fuego-dotclaude</a>
+        <ul>
+            <li><a href="docs/getting-started/">Get Started</a></li>
+            <li><a href="https://github.com/gofuego/fuego-dotclaude">GitHub</a></li>
+        </ul>
+    </nav>
+</header>
+
+<div class="layout">
+    
+<nav class="sidebar" aria-label="Documentation">
+    
+    <div class="nav-group">
+        <p class="nav-heading">Getting Started</p>
+        <ul>
+            <li><a href="/fuego-dotclaude/docs/getting-started/">Getting Started</a></li>
+        </ul>
+    </div>
+    
+    <div class="nav-group">
+        <p class="nav-heading">Concepts</p>
+        <ul>
+            <li><a href="/fuego-dotclaude/docs/concepts/what-gets-rendered/">What Gets Rendered</a></li>
+            <li><a href="/fuego-dotclaude/docs/concepts/cross-references/">Cross-References</a></li>
+            <li><a href="/fuego-dotclaude/docs/concepts/scope-detection/" class="current">Scope Detection</a></li>
+        </ul>
+    </div>
+    
+    <div class="nav-group">
+        <p class="nav-heading">Guides</p>
+        <ul>
+            <li><a href="/fuego-dotclaude/docs/guides/browse-by-taxonomy/">Browse by Taxonomy</a></li>
+            <li><a href="/fuego-dotclaude/docs/guides/settings-and-mcp/">Settings &amp; MCP Pages</a></li>
+            <li><a href="/fuego-dotclaude/docs/guides/validate-in-ci/">Validate in CI</a></li>
+            <li><a href="/fuego-dotclaude/docs/guides/publish-your-workspace/">Publish Your Workspace</a></li>
+        </ul>
+    </div>
+    
+    <div class="nav-group">
+        <p class="nav-heading">Reference</p>
+        <ul>
+            <li><a href="/fuego-dotclaude/docs/reference/cli/">CLI Reference</a></li>
+            <li><a href="/fuego-dotclaude/docs/reference/configuration/">Configuration</a></li>
+            <li><a href="/fuego-dotclaude/docs/reference/use-as-a-pack/">Use as a Pack</a></li>
+        </ul>
+    </div>
+</nav>
+
+    <main>
+    
+<article class="doc">
+    <h1>Scope Detection</h1>
+    <p>Every command (<code>build</code>, <code>serve</code>, <code>validate</code>, <code>list</code>) takes an optional path and resolves it the same way. No argument means the current directory — the common case is <code>cd</code>-ing into a project and running the tool there.</p>
+<h2>The four rules</h2>
+<p>Checked in order:</p>
+<table>
+<thead>
+<tr>
+<th>You give it</th>
+<th>It builds</th>
+<th>Mode</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>a directory <strong>containing</strong> <code>.claude/</code></td>
+<td><code>&lt;arg&gt;/.claude</code></td>
+<td><strong>project</strong> — siblings folded in</td>
+</tr>
+<tr>
+<td>a directory <strong>named</strong> <code>.claude</code></td>
+<td>that directory</td>
+<td>isolated</td>
+</tr>
+<tr>
+<td>any <strong>other directory</strong></td>
+<td>that directory as the content root</td>
+<td>isolated</td>
+</tr>
+<tr>
+<td>a path that isn't a directory</td>
+<td>—</td>
+<td>error</td>
+</tr>
+</tbody>
+</table>
+<p>The third rule is for a dedicated repo that holds the <code>.claude</code> layout under a different name — an <code>ai/</code> repo with <code>agents/</code>, <code>skills/</code>, and <code>commands/</code> at its root renders exactly like a <code>.claude</code> would.</p>
+<h2>Project mode and siblings</h2>
+<p>In project mode, three files from the directory <em>above</em> the <code>.claude</code> are folded in as pages: the root <code>CLAUDE.md</code>, <code>CLAUDE.local.md</code>, and <code>.mcp.json</code>. The root <code>CLAUDE.md</code> also takes precedence as the site's <a href="docs/concepts/what-gets-rendered/#the-home-page">home page</a>.</p>
+<p>The content directory stays the real <code>.claude</code> — siblings are injected during the build, not copied — so <code>serve</code>'s file watching works inside the directory you're actually editing.</p>
+<h2>Overriding the default</h2>
+<p>Two mutually exclusive flags force the sibling behavior regardless of what detection decided:</p>
+<pre><code class="language-bash">fuego-dotclaude build ~/.claude --siblings     # fold in ~/CLAUDE.md etc. anyway
+fuego-dotclaude build my-project --no-siblings # project, but .claude only
+</code></pre>
+<h2>Examples</h2>
+<pre><code class="language-bash">fuego-dotclaude build                   # cwd contains .claude/ → project mode
+fuego-dotclaude build ~/code/app       # app contains .claude/ → project mode
+fuego-dotclaude build ~/.claude        # isolated: just the user-scope .claude
+fuego-dotclaude build ~/code/ai-repo   # isolated: repo IS the layout
+</code></pre>
+
+</article>
+
+    </main>
+</div>
+<footer>
+    <p>Built with Fuego — the format-agnostic static site engine.</p>
+</footer>
+</body>
+</html>

@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <base href="/fuego-dotclaude/">
+    <title>Use as a Pack — fuego-dotclaude</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="alternate" type="application/rss+xml" title="fuego-dotclaude" href="rss.xml">
+</head>
+<body>
+<header>
+    <nav>
+        <a href="." class="logo">fuego-dotclaude</a>
+        <ul>
+            <li><a href="docs/getting-started/">Get Started</a></li>
+            <li><a href="https://github.com/gofuego/fuego-dotclaude">GitHub</a></li>
+        </ul>
+    </nav>
+</header>
+
+<div class="layout">
+    
+<nav class="sidebar" aria-label="Documentation">
+    
+    <div class="nav-group">
+        <p class="nav-heading">Getting Started</p>
+        <ul>
+            <li><a href="/fuego-dotclaude/docs/getting-started/">Getting Started</a></li>
+        </ul>
+    </div>
+    
+    <div class="nav-group">
+        <p class="nav-heading">Concepts</p>
+        <ul>
+            <li><a href="/fuego-dotclaude/docs/concepts/what-gets-rendered/">What Gets Rendered</a></li>
+            <li><a href="/fuego-dotclaude/docs/concepts/cross-references/">Cross-References</a></li>
+            <li><a href="/fuego-dotclaude/docs/concepts/scope-detection/">Scope Detection</a></li>
+        </ul>
+    </div>
+    
+    <div class="nav-group">
+        <p class="nav-heading">Guides</p>
+        <ul>
+            <li><a href="/fuego-dotclaude/docs/guides/browse-by-taxonomy/">Browse by Taxonomy</a></li>
+            <li><a href="/fuego-dotclaude/docs/guides/settings-and-mcp/">Settings &amp; MCP Pages</a></li>
+            <li><a href="/fuego-dotclaude/docs/guides/validate-in-ci/">Validate in CI</a></li>
+            <li><a href="/fuego-dotclaude/docs/guides/publish-your-workspace/">Publish Your Workspace</a></li>
+        </ul>
+    </div>
+    
+    <div class="nav-group">
+        <p class="nav-heading">Reference</p>
+        <ul>
+            <li><a href="/fuego-dotclaude/docs/reference/cli/">CLI Reference</a></li>
+            <li><a href="/fuego-dotclaude/docs/reference/configuration/">Configuration</a></li>
+            <li><a href="/fuego-dotclaude/docs/reference/use-as-a-pack/" class="current">Use as a Pack</a></li>
+        </ul>
+    </div>
+</nav>
+
+    <main>
+    
+<article class="doc">
+    <h1>Use as a Pack</h1>
+    <p>The pack is the product; the CLI is a zero-config wrapper over it. If you're building a <a href="https://gofuego.github.io/fuego-docs/">Fuego</a> site of your own — or want <code>.claude</code> rendering as one section of a larger site — consume the pack directly:</p>
+<pre><code class="language-go">import (
+    &quot;github.com/gofuego/fuego-dotclaude/dotclaude&quot;
+    &quot;github.com/gofuego/fuego/engine&quot;
+)
+
+eng := engine.New()
+eng.Use(dotclaude.Pack())
+err := eng.Build(ctx, engine.BuildOptions{
+    ContentDir: &quot;.claude&quot;,
+    OutputDir:  &quot;build&quot;,
+    SiteName:   &quot;My Workspace&quot;,
+})
+</code></pre>
+<p><code>Pack()</code> bundles everything: the Markdown and JSON parsers, the classification and enrichment hooks, the cross-reference linker, the embedded theme with its static assets, and the route/taxonomy config defaults.</p>
+<h2>Sibling injection is the CLI's job</h2>
+<p>Folding in a project root's <code>CLAUDE.md</code>/<code>CLAUDE.local.md</code>/<code>.mcp.json</code> is <em>not</em> part of the pack — it's an extra hook the CLI registers when <a href="docs/concepts/scope-detection/">scope detection</a> calls for it. To get it programmatically:</p>
+<pre><code class="language-go">eng.AfterParse(dotclaude.SiblingHook(projectRoot))
+</code></pre>
+<h2>Routes the pack claims</h2>
+<p>The pack's config defaults route each artifact kind under its own section — <code>/agents/{slug}</code>, <code>/skills/{slug}</code>, <code>/commands/{slug}</code>, <code>/output-styles/{slug}</code>, <code>/memory/{slug}</code>, <code>/mcp</code>, <code>/settings</code>, <code>/settings/local</code>, <code>/plugins/{slug}</code> (+ <code>/plugins/{slug}/mcp</code>), <code>/marketplaces/{slug}</code> — plus the <code>/tools</code>, <code>/models</code>, and <code>/sources</code> taxonomies and the generated <code>/references/</code> graph. Composing into a larger site, make sure nothing else claims those prefixes (Fuego's collision detection will fail the build loudly if something does).</p>
+<h2>Overriding</h2>
+<p>Standard Fuego pack precedence applies: your project's <code>config.yaml</code> deep-merges <strong>over</strong> the pack's defaults (change a route by restating it), and any file in your project's <code>theme/</code> directory wins over the pack's embedded theme — drop in your own <code>theme/layouts/agent.html</code> to restyle agent pages without forking anything.</p>
+<h2>Version pinning</h2>
+<p>The pack pins a tagged Fuego release, so <code>go install</code>/<code>go get</code> work from the module proxy with no local checkouts. Requires Go 1.25+.</p>
+
+</article>
+
+    </main>
+</div>
+<footer>
+    <p>Built with Fuego — the format-agnostic static site engine.</p>
+</footer>
+</body>
+</html>

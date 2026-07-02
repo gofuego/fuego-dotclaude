@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <base href="/fuego-dotclaude/">
+    <title>Settings &amp; MCP Pages — fuego-dotclaude</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="alternate" type="application/rss+xml" title="fuego-dotclaude" href="rss.xml">
+</head>
+<body>
+<header>
+    <nav>
+        <a href="." class="logo">fuego-dotclaude</a>
+        <ul>
+            <li><a href="docs/getting-started/">Get Started</a></li>
+            <li><a href="https://github.com/gofuego/fuego-dotclaude">GitHub</a></li>
+        </ul>
+    </nav>
+</header>
+
+<div class="layout">
+    
+<nav class="sidebar" aria-label="Documentation">
+    
+    <div class="nav-group">
+        <p class="nav-heading">Getting Started</p>
+        <ul>
+            <li><a href="/fuego-dotclaude/docs/getting-started/">Getting Started</a></li>
+        </ul>
+    </div>
+    
+    <div class="nav-group">
+        <p class="nav-heading">Concepts</p>
+        <ul>
+            <li><a href="/fuego-dotclaude/docs/concepts/what-gets-rendered/">What Gets Rendered</a></li>
+            <li><a href="/fuego-dotclaude/docs/concepts/cross-references/">Cross-References</a></li>
+            <li><a href="/fuego-dotclaude/docs/concepts/scope-detection/">Scope Detection</a></li>
+        </ul>
+    </div>
+    
+    <div class="nav-group">
+        <p class="nav-heading">Guides</p>
+        <ul>
+            <li><a href="/fuego-dotclaude/docs/guides/browse-by-taxonomy/">Browse by Taxonomy</a></li>
+            <li><a href="/fuego-dotclaude/docs/guides/settings-and-mcp/" class="current">Settings &amp; MCP Pages</a></li>
+            <li><a href="/fuego-dotclaude/docs/guides/validate-in-ci/">Validate in CI</a></li>
+            <li><a href="/fuego-dotclaude/docs/guides/publish-your-workspace/">Publish Your Workspace</a></li>
+        </ul>
+    </div>
+    
+    <div class="nav-group">
+        <p class="nav-heading">Reference</p>
+        <ul>
+            <li><a href="/fuego-dotclaude/docs/reference/cli/">CLI Reference</a></li>
+            <li><a href="/fuego-dotclaude/docs/reference/configuration/">Configuration</a></li>
+            <li><a href="/fuego-dotclaude/docs/reference/use-as-a-pack/">Use as a Pack</a></li>
+        </ul>
+    </div>
+</nav>
+
+    <main>
+    
+<article class="doc">
+    <h1>Settings &amp; MCP Pages</h1>
+    <p>The JSON files in a <code>.claude</code> directory get rich, purpose-built pages rather than syntax-highlighted dumps.</p>
+<h2><code>.mcp.json</code> → <code>/mcp/</code></h2>
+<p>One <strong>card per server</strong>, showing the transport (<code>stdio</code> command, <code>sse</code>/<code>http</code> URL), arguments, and declared environment variable <em>names</em>. Server names are <a href="docs/concepts/cross-references/">cross-reference targets</a>, so an agent that mentions a server by name links here — and the server's card is where its backlinks accumulate. A collapsible raw-JSON block sits at the bottom for exact contents.</p>
+<p>A plugin's own <code>.mcp.json</code> renders the same way at <code>/plugins/&lt;name&gt;/mcp/</code>.</p>
+<h2><code>settings.json</code> → <code>/settings/</code></h2>
+<p>Claude Code's settings file has a long tail of keys, so the page is layered:</p>
+<ol>
+<li><strong>Curated sections</strong> for the high-signal groups — model, permissions (default mode, allow/deny rules), hooks, environment, status line, MCP server allow/deny, plugin controls.</li>
+<li><strong>A generic key/value table</strong> for everything else, so an unrecognized or newly introduced key is still visible.</li>
+<li><strong>A collapsible raw JSON block</strong> as ground truth.</li>
+</ol>
+<p><code>settings.local.json</code> renders identically at <code>/settings/local/</code>.</p>
+<h2>Malformed input degrades, it doesn't fail</h2>
+<p>A JSON file that doesn't parse still gets a page — degraded to the raw view, with the problem reported. Unknown keys are preserved, not dropped. The same tolerance applies to Markdown frontmatter across the site: an invalid YAML block (unquoted colons are endemic in real agent files) renders the page with the raw frontmatter preserved and a warning banner, instead of failing the build.</p>
+<p>To turn these soft warnings into a hard gate, use <a href="docs/guides/validate-in-ci/"><code>validate --strict</code></a>.</p>
+<h2>A note on secrets</h2>
+<p>These pages render what the files contain. <code>.mcp.json</code> commonly carries environment values and <code>settings.local.json</code> is machine-local by convention — review both before <a href="docs/guides/publish-your-workspace/">publishing a built site</a> anywhere public.</p>
+
+</article>
+
+    </main>
+</div>
+<footer>
+    <p>Built with Fuego — the format-agnostic static site engine.</p>
+</footer>
+</body>
+</html>

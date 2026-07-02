@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <base href="/fuego-dotclaude/">
+    <title>CLI Reference — fuego-dotclaude</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="alternate" type="application/rss+xml" title="fuego-dotclaude" href="rss.xml">
+</head>
+<body>
+<header>
+    <nav>
+        <a href="." class="logo">fuego-dotclaude</a>
+        <ul>
+            <li><a href="docs/getting-started/">Get Started</a></li>
+            <li><a href="https://github.com/gofuego/fuego-dotclaude">GitHub</a></li>
+        </ul>
+    </nav>
+</header>
+
+<div class="layout">
+    
+<nav class="sidebar" aria-label="Documentation">
+    
+    <div class="nav-group">
+        <p class="nav-heading">Getting Started</p>
+        <ul>
+            <li><a href="/fuego-dotclaude/docs/getting-started/">Getting Started</a></li>
+        </ul>
+    </div>
+    
+    <div class="nav-group">
+        <p class="nav-heading">Concepts</p>
+        <ul>
+            <li><a href="/fuego-dotclaude/docs/concepts/what-gets-rendered/">What Gets Rendered</a></li>
+            <li><a href="/fuego-dotclaude/docs/concepts/cross-references/">Cross-References</a></li>
+            <li><a href="/fuego-dotclaude/docs/concepts/scope-detection/">Scope Detection</a></li>
+        </ul>
+    </div>
+    
+    <div class="nav-group">
+        <p class="nav-heading">Guides</p>
+        <ul>
+            <li><a href="/fuego-dotclaude/docs/guides/browse-by-taxonomy/">Browse by Taxonomy</a></li>
+            <li><a href="/fuego-dotclaude/docs/guides/settings-and-mcp/">Settings &amp; MCP Pages</a></li>
+            <li><a href="/fuego-dotclaude/docs/guides/validate-in-ci/">Validate in CI</a></li>
+            <li><a href="/fuego-dotclaude/docs/guides/publish-your-workspace/">Publish Your Workspace</a></li>
+        </ul>
+    </div>
+    
+    <div class="nav-group">
+        <p class="nav-heading">Reference</p>
+        <ul>
+            <li><a href="/fuego-dotclaude/docs/reference/cli/" class="current">CLI Reference</a></li>
+            <li><a href="/fuego-dotclaude/docs/reference/configuration/">Configuration</a></li>
+            <li><a href="/fuego-dotclaude/docs/reference/use-as-a-pack/">Use as a Pack</a></li>
+        </ul>
+    </div>
+</nav>
+
+    <main>
+    
+<article class="doc">
+    <h1>CLI Reference</h1>
+    <pre><code>fuego-dotclaude &lt;command&gt; [path] [flags]
+</code></pre>
+<p>All four commands share the same optional <code>[path]</code> argument, resolved by the <a href="docs/concepts/scope-detection/">scope detection rules</a> (default: the current directory), the same <code>--siblings</code>/<code>--no-siblings</code> override, and the same <a href="docs/reference/configuration/">configuration lookup</a>.</p>
+<h2>build</h2>
+<p>Build the static site.</p>
+<pre><code class="language-bash">fuego-dotclaude build [path] [flags]
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>Flag</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>-o, --output &lt;dir&gt;</code></td>
+<td>Output directory (default <code>build</code>, or <code>output_path</code> from config).</td>
+</tr>
+<tr>
+<td><code>--base-url &lt;path&gt;</code></td>
+<td>Base URL for deployment, e.g. <code>/my-repo</code>.</td>
+</tr>
+<tr>
+<td><code>--incremental</code></td>
+<td>Reuse cached parses for unchanged files.</td>
+</tr>
+<tr>
+<td><code>--siblings</code> / <code>--no-siblings</code></td>
+<td>Force or suppress root-level sibling injection.</td>
+</tr>
+</tbody>
+</table>
+<h2>serve</h2>
+<p>Build and serve with live reload, rebuilding on change.</p>
+<pre><code class="language-bash">fuego-dotclaude serve [path] [flags]
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>Flag</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--port &lt;n&gt;</code></td>
+<td>Dev server port (default: engine default).</td>
+</tr>
+<tr>
+<td><code>--base-url &lt;path&gt;</code></td>
+<td>Base URL, when previewing a subpath deployment.</td>
+</tr>
+<tr>
+<td><code>--siblings</code> / <code>--no-siblings</code></td>
+<td>As above.</td>
+</tr>
+</tbody>
+</table>
+<p>Output and cache are written to a stable scratch directory under the OS temp dir, keyed by the content path — never into the watched tree (which would loop the watcher), and the incremental cache survives restarts.</p>
+<h2>validate</h2>
+<p>Report advisory coherence diagnostics; see <a href="docs/guides/validate-in-ci/">Validate in CI</a> for the full list.</p>
+<pre><code class="language-bash">fuego-dotclaude validate [path] [--strict]
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>Flag</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--strict</code></td>
+<td>Exit non-zero if any problem is found (for CI gates).</td>
+</tr>
+</tbody>
+</table>
+<h2>list</h2>
+<p>Print every discovered artifact as a table.</p>
+<pre><code class="language-bash">fuego-dotclaude list [path]
+</code></pre>
+<p>Columns: <code>TYPE</code> (agent, skill, command, …), <code>NAME</code>, and <code>ROUTE</code> (the page URL it will get).</p>
+<h2>version</h2>
+<pre><code class="language-bash">fuego-dotclaude --version
+</code></pre>
+<p>Prints the version baked in at build time (<code>dev</code> for a source build).</p>
+
+</article>
+
+    </main>
+</div>
+<footer>
+    <p>Built with Fuego — the format-agnostic static site engine.</p>
+</footer>
+</body>
+</html>

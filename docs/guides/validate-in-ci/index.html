@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <base href="/fuego-dotclaude/">
+    <title>Validate in CI — fuego-dotclaude</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="alternate" type="application/rss+xml" title="fuego-dotclaude" href="rss.xml">
+</head>
+<body>
+<header>
+    <nav>
+        <a href="." class="logo">fuego-dotclaude</a>
+        <ul>
+            <li><a href="docs/getting-started/">Get Started</a></li>
+            <li><a href="https://github.com/gofuego/fuego-dotclaude">GitHub</a></li>
+        </ul>
+    </nav>
+</header>
+
+<div class="layout">
+    
+<nav class="sidebar" aria-label="Documentation">
+    
+    <div class="nav-group">
+        <p class="nav-heading">Getting Started</p>
+        <ul>
+            <li><a href="/fuego-dotclaude/docs/getting-started/">Getting Started</a></li>
+        </ul>
+    </div>
+    
+    <div class="nav-group">
+        <p class="nav-heading">Concepts</p>
+        <ul>
+            <li><a href="/fuego-dotclaude/docs/concepts/what-gets-rendered/">What Gets Rendered</a></li>
+            <li><a href="/fuego-dotclaude/docs/concepts/cross-references/">Cross-References</a></li>
+            <li><a href="/fuego-dotclaude/docs/concepts/scope-detection/">Scope Detection</a></li>
+        </ul>
+    </div>
+    
+    <div class="nav-group">
+        <p class="nav-heading">Guides</p>
+        <ul>
+            <li><a href="/fuego-dotclaude/docs/guides/browse-by-taxonomy/">Browse by Taxonomy</a></li>
+            <li><a href="/fuego-dotclaude/docs/guides/settings-and-mcp/">Settings &amp; MCP Pages</a></li>
+            <li><a href="/fuego-dotclaude/docs/guides/validate-in-ci/" class="current">Validate in CI</a></li>
+            <li><a href="/fuego-dotclaude/docs/guides/publish-your-workspace/">Publish Your Workspace</a></li>
+        </ul>
+    </div>
+    
+    <div class="nav-group">
+        <p class="nav-heading">Reference</p>
+        <ul>
+            <li><a href="/fuego-dotclaude/docs/reference/cli/">CLI Reference</a></li>
+            <li><a href="/fuego-dotclaude/docs/reference/configuration/">Configuration</a></li>
+            <li><a href="/fuego-dotclaude/docs/reference/use-as-a-pack/">Use as a Pack</a></li>
+        </ul>
+    </div>
+</nav>
+
+    <main>
+    
+<article class="doc">
+    <h1>Validate in CI</h1>
+    <p><code>fuego-dotclaude validate</code> runs advisory coherence checks over a <code>.claude</code> directory without building HTML. Diagnostics print one per line, attributed to the file to fix; the exit code stays zero unless you pass <code>--strict</code>.</p>
+<pre><code class="language-bash">fuego-dotclaude validate            # report problems, exit 0
+fuego-dotclaude validate --strict   # exit non-zero if anything is found
+</code></pre>
+<h2>The diagnostics</h2>
+<table>
+<thead>
+<tr>
+<th>Diagnostic</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>missing required frontmatter: name</code></td>
+<td>An agent or skill has no <code>name:</code> — Claude Code can't address it.</td>
+</tr>
+<tr>
+<td><code>missing required frontmatter: description</code></td>
+<td>An agent, skill, or command has no <code>description:</code> — nothing tells Claude when to use it.</td>
+</tr>
+<tr>
+<td><code>skill name &quot;x&quot; does not match its directory &quot;y&quot;</code></td>
+<td>A skill's <code>name:</code> differs from its folder name; Claude Code resolves skills by directory.</td>
+</tr>
+<tr>
+<td><code>references unknown subagent &quot;x&quot;</code></td>
+<td>An artifact declares a <code>subagent_type</code> that matches no agent in the tree.</td>
+</tr>
+<tr>
+<td><code>references unknown MCP server &quot;x&quot;</code></td>
+<td>An artifact references an MCP server name that no <code>.mcp.json</code> defines.</td>
+</tr>
+<tr>
+<td><code>malformed JSON: …</code></td>
+<td>A JSON config file failed to parse (the site renders it as a raw view).</td>
+</tr>
+</tbody>
+</table>
+<p>Everything is <strong>advisory by design</strong>: the site always renders, because a half-written skill shouldn't block viewing the rest of the workspace. <code>--strict</code> only changes the exit code.</p>
+<h2>In GitHub Actions</h2>
+<pre><code class="language-yaml">name: Validate .claude
+on:
+  pull_request:
+  push:
+    branches-ignore: [main]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: &quot;1.25&quot;
+      - run: go run github.com/gofuego/fuego-dotclaude@latest validate --strict
+</code></pre>
+<p>Run from the repo root: <a href="docs/concepts/scope-detection/">scope detection</a> finds <code>./.claude</code> and folds in the root <code>CLAUDE.md</code>/<code>.mcp.json</code>, so the siblings are validated too.</p>
+<h2>Listing what was found</h2>
+<p><code>fuego-dotclaude list</code> prints every discovered artifact as a <code>TYPE / NAME / ROUTE</code> table — useful for a quick inventory, or for diffing what a plugin install actually added.</p>
+
+</article>
+
+    </main>
+</div>
+<footer>
+    <p>Built with Fuego — the format-agnostic static site engine.</p>
+</footer>
+</body>
+</html>

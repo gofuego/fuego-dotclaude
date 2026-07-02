@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <base href="/fuego-dotclaude/">
+    <title>Getting Started — fuego-dotclaude</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="alternate" type="application/rss+xml" title="fuego-dotclaude" href="rss.xml">
+</head>
+<body>
+<header>
+    <nav>
+        <a href="." class="logo">fuego-dotclaude</a>
+        <ul>
+            <li><a href="docs/getting-started/">Get Started</a></li>
+            <li><a href="https://github.com/gofuego/fuego-dotclaude">GitHub</a></li>
+        </ul>
+    </nav>
+</header>
+
+<div class="layout">
+    
+<nav class="sidebar" aria-label="Documentation">
+    
+    <div class="nav-group">
+        <p class="nav-heading">Getting Started</p>
+        <ul>
+            <li><a href="/fuego-dotclaude/docs/getting-started/" class="current">Getting Started</a></li>
+        </ul>
+    </div>
+    
+    <div class="nav-group">
+        <p class="nav-heading">Concepts</p>
+        <ul>
+            <li><a href="/fuego-dotclaude/docs/concepts/what-gets-rendered/">What Gets Rendered</a></li>
+            <li><a href="/fuego-dotclaude/docs/concepts/cross-references/">Cross-References</a></li>
+            <li><a href="/fuego-dotclaude/docs/concepts/scope-detection/">Scope Detection</a></li>
+        </ul>
+    </div>
+    
+    <div class="nav-group">
+        <p class="nav-heading">Guides</p>
+        <ul>
+            <li><a href="/fuego-dotclaude/docs/guides/browse-by-taxonomy/">Browse by Taxonomy</a></li>
+            <li><a href="/fuego-dotclaude/docs/guides/settings-and-mcp/">Settings &amp; MCP Pages</a></li>
+            <li><a href="/fuego-dotclaude/docs/guides/validate-in-ci/">Validate in CI</a></li>
+            <li><a href="/fuego-dotclaude/docs/guides/publish-your-workspace/">Publish Your Workspace</a></li>
+        </ul>
+    </div>
+    
+    <div class="nav-group">
+        <p class="nav-heading">Reference</p>
+        <ul>
+            <li><a href="/fuego-dotclaude/docs/reference/cli/">CLI Reference</a></li>
+            <li><a href="/fuego-dotclaude/docs/reference/configuration/">Configuration</a></li>
+            <li><a href="/fuego-dotclaude/docs/reference/use-as-a-pack/">Use as a Pack</a></li>
+        </ul>
+    </div>
+</nav>
+
+    <main>
+    
+<article class="doc">
+    <h1>Getting Started</h1>
+    <h2>Install</h2>
+<pre><code class="language-bash">go install github.com/gofuego/fuego-dotclaude@latest
+</code></pre>
+<p>Requires Go 1.25+. The binary is self-contained — the theme is embedded, and nothing is ever written into the directory you point it at.</p>
+<h2>Build your first site</h2>
+<p>The common case is a project repo that contains a <code>.claude/</code> directory. <code>cd</code> in and run:</p>
+<pre><code class="language-bash">cd my-project
+fuego-dotclaude serve
+</code></pre>
+<p>That builds <code>./.claude</code> — folding in the root-level <code>CLAUDE.md</code>, <code>CLAUDE.local.md</code>, and <code>.mcp.json</code> — and serves it with live reload, rebuilding as you edit. Output and cache go to a scratch directory outside your project, so watching never loops and no artifacts land in your repo.</p>
+<p>For a one-shot static build:</p>
+<pre><code class="language-bash">fuego-dotclaude build            # writes to ./build
+fuego-dotclaude build -o /tmp/site
+</code></pre>
+<p>You can also point it at things explicitly:</p>
+<pre><code class="language-bash">fuego-dotclaude build path/to/project   # a repo containing .claude/
+fuego-dotclaude build ~/.claude         # a .claude directly — isolated
+fuego-dotclaude build path/to/ai        # a dedicated repo that IS the .claude
+                                        # layout under another name — isolated
+</code></pre>
+<p>The detection rules are small and predictable — see <a href="docs/concepts/scope-detection/">Scope Detection</a>.</p>
+<h2>What you get</h2>
+<ul>
+<li><strong>Home</strong> — your top-level <code>CLAUDE.md</code> (the project-root one wins over <code>.claude/CLAUDE.md</code>), followed by a generated catalog of every artifact. With no <code>CLAUDE.md</code> anywhere, a generated dashboard.</li>
+<li><strong>A page per artifact</strong> — agents, skills (with their bundled files), slash commands (namespaced, <code>/git:commit</code>), output styles, memory files, <code>.mcp.json</code>, <code>settings.json</code>, and each installed plugin's internals. The full map is in <a href="docs/concepts/what-gets-rendered/">What Gets Rendered</a>.</li>
+<li><strong>Cross-references</strong> — whole-word mentions of an artifact's name auto-link to its page, each page lists what references it, and <code>/references/</code> is the global graph. See <a href="docs/concepts/cross-references/">Cross-References</a>.</li>
+<li><strong>Taxonomy hubs</strong> — browse by <code>tools</code>, <code>model</code>, and <code>source</code> (project vs. each plugin). See <a href="docs/guides/browse-by-taxonomy/">Browse by Taxonomy</a>.</li>
+<li><strong>An IDE-style sidebar</strong> — a collapsible file tree of the whole artifact set, identical on every page.</li>
+</ul>
+<h2>Check your workspace without building</h2>
+<pre><code class="language-bash">fuego-dotclaude list             # every discovered artifact: TYPE, NAME, ROUTE
+fuego-dotclaude validate         # advisory coherence diagnostics
+</code></pre>
+<p><code>validate</code> reports missing frontmatter, name mismatches, dangling references, and malformed JSON — warnings by default, <code>--strict</code> for CI. See <a href="docs/guides/validate-in-ci/">Validate in CI</a>.</p>
+<h2>Next steps</h2>
+<ul>
+<li>Publishing the site somewhere? Read <a href="docs/guides/publish-your-workspace/">Publish Your Workspace</a> — including what <strong>not</strong> to publish.</li>
+<li>Building a larger Fuego site and want <code>.claude</code> rendering as one section? See <a href="docs/reference/use-as-a-pack/">Use as a Pack</a>.</li>
+</ul>
+
+</article>
+
+    </main>
+</div>
+<footer>
+    <p>Built with Fuego — the format-agnostic static site engine.</p>
+</footer>
+</body>
+</html>

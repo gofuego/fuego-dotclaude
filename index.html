@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <base href="/fuego-dotclaude/">
+    <title>See your Claude Code workspace — fuego-dotclaude</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="alternate" type="application/rss+xml" title="fuego-dotclaude" href="rss.xml">
+</head>
+<body>
+<header>
+    <nav>
+        <a href="." class="logo">fuego-dotclaude</a>
+        <ul>
+            <li><a href="docs/getting-started/">Get Started</a></li>
+            <li><a href="https://github.com/gofuego/fuego-dotclaude">GitHub</a></li>
+        </ul>
+    </nav>
+</header>
+
+<div class="layout">
+    
+
+    <main>
+    
+<section class="hero">
+    <h1>See your Claude Code workspace</h1>
+    <p>A <code>.claude/</code> directory accumulates agents, skills, slash commands, output styles, memory, MCP servers, settings, and plugins — and no way to see them as a whole. <strong>fuego-dotclaude renders it as a navigable, cross-referenced site</strong>: every artifact becomes a page, every whole-word mention of an artifact's name becomes a link, and every page lists what references it.</p>
+<pre><code class="language-bash">go install github.com/gofuego/fuego-dotclaude@latest
+cd my-project &amp;&amp; fuego-dotclaude serve
+</code></pre>
+<p>One command, zero config. The tool detects whether you pointed it at a project (builds <code>./.claude</code> and folds in the root <code>CLAUDE.md</code>/<code>.mcp.json</code>) or at a <code>.claude</code> directory itself. Your top-level <code>CLAUDE.md</code> becomes the home page, followed by a generated catalog of everything else — including the agents, skills, and commands inside each installed plugin, rendered as first-class pages.</p>
+
+    <div class="cta">
+        <a class="btn" href="/fuego-dotclaude/docs/getting-started/">Get started</a>
+        <a class="btn btn-ghost" href="/fuego-dotclaude/docs/reference/cli/">CLI reference</a>
+    </div>
+</section>
+
+    </main>
+</div>
+<footer>
+    <p>Built with Fuego — the format-agnostic static site engine.</p>
+</footer>
+</body>
+</html>

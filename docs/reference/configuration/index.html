@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <base href="/fuego-dotclaude/">
+    <title>Configuration — fuego-dotclaude</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="alternate" type="application/rss+xml" title="fuego-dotclaude" href="rss.xml">
+</head>
+<body>
+<header>
+    <nav>
+        <a href="." class="logo">fuego-dotclaude</a>
+        <ul>
+            <li><a href="docs/getting-started/">Get Started</a></li>
+            <li><a href="https://github.com/gofuego/fuego-dotclaude">GitHub</a></li>
+        </ul>
+    </nav>
+</header>
+
+<div class="layout">
+    
+<nav class="sidebar" aria-label="Documentation">
+    
+    <div class="nav-group">
+        <p class="nav-heading">Getting Started</p>
+        <ul>
+            <li><a href="/fuego-dotclaude/docs/getting-started/">Getting Started</a></li>
+        </ul>
+    </div>
+    
+    <div class="nav-group">
+        <p class="nav-heading">Concepts</p>
+        <ul>
+            <li><a href="/fuego-dotclaude/docs/concepts/what-gets-rendered/">What Gets Rendered</a></li>
+            <li><a href="/fuego-dotclaude/docs/concepts/cross-references/">Cross-References</a></li>
+            <li><a href="/fuego-dotclaude/docs/concepts/scope-detection/">Scope Detection</a></li>
+        </ul>
+    </div>
+    
+    <div class="nav-group">
+        <p class="nav-heading">Guides</p>
+        <ul>
+            <li><a href="/fuego-dotclaude/docs/guides/browse-by-taxonomy/">Browse by Taxonomy</a></li>
+            <li><a href="/fuego-dotclaude/docs/guides/settings-and-mcp/">Settings &amp; MCP Pages</a></li>
+            <li><a href="/fuego-dotclaude/docs/guides/validate-in-ci/">Validate in CI</a></li>
+            <li><a href="/fuego-dotclaude/docs/guides/publish-your-workspace/">Publish Your Workspace</a></li>
+        </ul>
+    </div>
+    
+    <div class="nav-group">
+        <p class="nav-heading">Reference</p>
+        <ul>
+            <li><a href="/fuego-dotclaude/docs/reference/cli/">CLI Reference</a></li>
+            <li><a href="/fuego-dotclaude/docs/reference/configuration/" class="current">Configuration</a></li>
+            <li><a href="/fuego-dotclaude/docs/reference/use-as-a-pack/">Use as a Pack</a></li>
+        </ul>
+    </div>
+</nav>
+
+    <main>
+    
+<article class="doc">
+    <h1>Configuration</h1>
+    <p>fuego-dotclaude is zero-config by design — the routes, theme, and parsers all come from the pack. One small optional file, <code>fuego-dotclaude.yaml</code>, overrides the site-level settings:</p>
+<pre><code class="language-yaml">site_name: &quot;Acme Engineering Workspace&quot;   # default: &quot;Claude Code Workspace&quot;
+base_url: &quot;/acme-claude&quot;                  # default: &quot;&quot; (root)
+output_path: &quot;dist&quot;                       # default: &quot;build&quot;
+</code></pre>
+<p>All fields are optional; anything unset keeps its default. CLI flags (<code>--base-url</code>, <code>-o</code>) win over the file for a single run.</p>
+<h2>Lookup order</h2>
+<p>The first file found wins:</p>
+<ol>
+<li><code>&lt;content-dir&gt;/fuego-dotclaude.yaml</code> — inside the <code>.claude</code> directory itself</li>
+<li>one directory above the content dir — the project root, next to <code>.claude/</code></li>
+<li>the current working directory</li>
+</ol>
+<p>The project-root location (2) is the natural home: the config travels with the repo without cluttering the <code>.claude</code> directory Claude Code reads.</p>
+<h2>What is deliberately <em>not</em> configurable</h2>
+<p>Routes, taxonomies, layouts, and the theme are fixed by the pack so every rendered workspace looks and navigates the same. If you need to change those, consume the pack from your own Fuego project instead — see <a href="docs/reference/use-as-a-pack/">Use as a Pack</a>, where your config and theme files override the pack's.</p>
+
+</article>
+
+    </main>
+</div>
+<footer>
+    <p>Built with Fuego — the format-agnostic static site engine.</p>
+</footer>
+</body>
+</html>
