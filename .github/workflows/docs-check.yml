@@ -1,0 +1,14 @@
+name: Docs check
+
+on:
+  pull_request:
+    paths: [docs/**]
+  push:
+    branches-ignore: [main, gh-pages, fuego-pages, fuego-studio-edits]
+    paths: [docs/**]
+
+jobs:
+  check:
+    uses: gofuego/.github/.github/workflows/fuego-check.yml@main
+    with:
+      project_dir: docs

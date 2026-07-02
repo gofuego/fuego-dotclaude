@@ -1,0 +1,20 @@
+name: Docs deploy
+
+# main → gh-pages only: the public documentation site. No studio build —
+# this repo's docs publish straight to GitHub Pages.
+
+on:
+  push:
+    branches: [main]
+    paths: [docs/**]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    permissions:
+      contents: write
+    uses: gofuego/.github/.github/workflows/fuego-deploy.yml@main
+    with:
+      pages_base: /fuego-dotclaude
+      project_dir: docs
+      check_links: true
