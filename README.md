@@ -7,6 +7,9 @@ MCP/settings config, and installed plugins of a Claude Code workspace into a
 static site — with whole-word cross-links between artifacts, backlinks, faceted
 taxonomies, and a catalog.
 
+**Documentation:** [gofuego.github.io/fuego-dotclaude](https://gofuego.github.io/fuego-dotclaude/)
+(source in [`docs/`](docs/), itself a Fuego site).
+
 ## Install
 
 ```sh
